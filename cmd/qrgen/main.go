@@ -21,6 +21,6 @@ func main() {
 	fmt.Println(qrencode.DetermineEncodingMode(ByteString))
 
 	////////////////////////////
-	QREncoder := qrencode.NewEncoder(AlphanumericString)
+	QREncoder := qrencode.NewEncoder(KanjiString)
 	fmt.Println(QREncoder.Encode())
 }
