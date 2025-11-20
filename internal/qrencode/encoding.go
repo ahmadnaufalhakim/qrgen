@@ -67,11 +67,11 @@ func IsShiftJIS(s string) bool {
 		// Check if the Shift JIS byte value is in the range
 		// of 0x8140 to 0x9FFC, or 0xE040 to 0xEBBF
 		sjisValue := (uint16(sjisBytes[0]) << 8) | uint16(sjisBytes[1])
-		if sjisValue >= 0x8140 && sjisValue <= 0x9FFC {
+		if (sjisValue >= 0x8140 && sjisValue <= 0x9FFC) ||
+			(sjisValue >= 0xE040 && sjisValue <= 0xEBBF) {
 			continue
-		}
-		if sjisValue >= 0xE040 && sjisValue <= 0xEBBF {
-			continue
+		} else {
+			return false
 		}
 	}
 
