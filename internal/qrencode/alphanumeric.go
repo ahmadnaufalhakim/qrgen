@@ -51,11 +51,11 @@ func encodeAlphanumericBits(group string, groupSize int) string {
 	return fmt.Sprintf(binaryFormat, alphanumericStrToInt(group))
 }
 
-func (ae *AlphanumericEncoder) Encode() []string {
+func (ae *AlphanumericEncoder) Encode() ([]string, error) {
 	var bits []string
 	for _, group := range alphanumericSplit(ae.s) {
 		bits = append(bits, encodeAlphanumericBits(group, len(group)))
 	}
 
-	return bits
+	return bits, nil
 }

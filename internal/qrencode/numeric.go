@@ -51,11 +51,11 @@ func encodeNumericBits(group string, groupSize int) string {
 	return fmt.Sprintf(binaryFormat, numericStrToInt(group))
 }
 
-func (ne *NumericEncoder) Encode() []string {
+func (ne *NumericEncoder) Encode() ([]string, error) {
 	var bits []string
 	for _, group := range numericSplit(ne.s) {
 		bits = append(bits, encodeNumericBits(group, len(group)))
 	}
 
-	return bits
+	return bits, nil
 }

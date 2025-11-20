@@ -1,7 +1,7 @@
 package qrencode
 
 type Encoder interface {
-	Encode() []string
+	Encode() ([]string, error)
 }
 
 func NewEncoder(s string) Encoder {
