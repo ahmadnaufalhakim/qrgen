@@ -7,7 +7,8 @@ import (
 )
 
 func main() {
-	NumericString := "1029384756"
+
+	NumericString := "8675309"
 	fmt.Println(qrencode.DetermineEncodingMode(NumericString))
 
 	AlphanumericString := "ABCDEFGHIJKLMNOPQRSTUVWXYZ0192837465 $%*+-./:"
@@ -18,4 +19,8 @@ func main() {
 
 	ByteString := "Hello, 世界!"
 	fmt.Println(qrencode.DetermineEncodingMode(ByteString))
+
+	////////////////////////////
+	QREncoder := qrencode.NewEncoder(NumericString)
+	fmt.Println(QREncoder.Encode())
 }
