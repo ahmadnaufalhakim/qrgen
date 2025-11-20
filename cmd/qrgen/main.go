@@ -17,10 +17,10 @@ func main() {
 	KanjiString := "だから僕は音楽をやめた"
 	fmt.Println(qrencode.DetermineEncodingMode(KanjiString))
 
-	ByteString := "Hello, 世界!"
+	ByteString := "Hello, world!"
 	fmt.Println(qrencode.DetermineEncodingMode(ByteString))
 
 	////////////////////////////
-	QREncoder := qrencode.NewEncoder(KanjiString)
+	QREncoder := qrencode.NewEncoder(ByteString)
 	fmt.Println(QREncoder.Encode())
 }
