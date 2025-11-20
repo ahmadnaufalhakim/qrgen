@@ -11,7 +11,7 @@ func main() {
 	NumericString := "8675309"
 	fmt.Println(qrencode.DetermineEncodingMode(NumericString))
 
-	AlphanumericString := "ABCDEFGHIJKLMNOPQRSTUVWXYZ0192837465 $%*+-./:"
+	AlphanumericString := "HELLO WORLD"
 	fmt.Println(qrencode.DetermineEncodingMode(AlphanumericString))
 
 	KanjiString := "だから僕は音楽をやめた"
@@ -21,6 +21,6 @@ func main() {
 	fmt.Println(qrencode.DetermineEncodingMode(ByteString))
 
 	////////////////////////////
-	QREncoder := qrencode.NewEncoder(NumericString)
+	QREncoder := qrencode.NewEncoder(AlphanumericString)
 	fmt.Println(QREncoder.Encode())
 }
