@@ -11,8 +11,8 @@ func NewEncoder(s string) Encoder {
 	case NumericMode:
 		return NewNumericEncoder(s)
 
-		// case AlphanumericMode:
-		// 	return NewAlphanumericEncoder(s)
+	case AlphanumericMode:
+		return NewAlphanumericEncoder(s)
 
 		// case KanjiMode:
 		// 	return NewKanjiEncoder(s)
