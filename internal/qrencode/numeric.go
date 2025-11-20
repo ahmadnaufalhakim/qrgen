@@ -15,7 +15,7 @@ func NewNumericEncoder(s string) *NumericEncoder {
 }
 
 // Convert a numeric string of length 1,2,3 into an integer.
-func str2int(s string) int {
+func numericStrToInt(s string) int {
 	result := 0
 	for _, r := range s {
 		result = (result * 10) + int(r-'0')
@@ -24,8 +24,8 @@ func str2int(s string) int {
 	return result
 }
 
-// Split the string into groups of 3 substrings (as per QR code specification).
-func split(s string) []string {
+// Split numeric string into groups of 3 (as per QR code specification).
+func numericSplit(s string) []string {
 	var groups []string
 	for i := 0; i < len(s); i += 3 {
 		end := min(i+3, len(s))
@@ -48,12 +48,12 @@ func encodeNumericBits(group string, groupSize int) string {
 		binaryFormat = "%04b"
 	}
 
-	return fmt.Sprintf(binaryFormat, str2int(group))
+	return fmt.Sprintf(binaryFormat, numericStrToInt(group))
 }
 
 func (ne *NumericEncoder) Encode() []string {
 	var bits []string
-	for _, group := range split(ne.s) {
+	for _, group := range numericSplit(ne.s) {
 		bits = append(bits, encodeNumericBits(group, len(group)))
 	}
 
