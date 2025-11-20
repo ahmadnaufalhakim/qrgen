@@ -1,34 +1,25 @@
 package qrencode
 
 import (
+	"github.com/ahmadnaufalhakim/qrgen/internal/qrconst"
 	"github.com/ahmadnaufalhakim/qrgen/internal/tables"
 	"golang.org/x/text/encoding/japanese"
 )
 
-type EncodingMode int
-
-const (
-	NumericMode      EncodingMode = 0b_0001
-	AlphanumericMode EncodingMode = 0b_0010
-	ByteMode         EncodingMode = 0b_0100
-	KanjiMode        EncodingMode = 0b_1000
-	ECIMode          EncodingMode = 0b_0111
-)
-
-func DetermineEncodingMode(s string) EncodingMode {
+func DetermineEncodingMode(s string) qrconst.EncodingMode {
 	if IsNumeric(s) {
-		return NumericMode
+		return qrconst.NumericMode
 	}
 
 	if IsAlphanumeric(s) {
-		return AlphanumericMode
+		return qrconst.AlphanumericMode
 	}
 
 	if IsShiftJIS(s) {
-		return KanjiMode
+		return qrconst.KanjiMode
 	}
 
-	return ByteMode
+	return qrconst.ByteMode
 }
 
 func IsNumeric(s string) bool {
