@@ -1,6 +1,10 @@
 package qrencode
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/ahmadnaufalhakim/qrgen/internal/qrconst"
+)
 
 type ByteEncoder struct {
 	s string
@@ -31,4 +35,9 @@ func (be *ByteEncoder) Encode() ([]string, error) {
 // encoded bytes, not Unicode characters.
 func (be *ByteEncoder) CharCount() int {
 	return len([]byte(be.s))
+}
+
+// Mode returns byte mode EncodingMode
+func (be *ByteEncoder) Mode() qrconst.EncodingMode {
+	return qrconst.ByteMode
 }

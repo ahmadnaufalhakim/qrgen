@@ -3,6 +3,7 @@ package qrencode
 import (
 	"fmt"
 
+	"github.com/ahmadnaufalhakim/qrgen/internal/qrconst"
 	"golang.org/x/text/encoding/japanese"
 )
 
@@ -67,4 +68,9 @@ func (ke *KanjiEncoder) Encode() ([]string, error) {
 // In Kanji mode, each rune corresponds to one encoded Kanji symbol.
 func (ke *KanjiEncoder) CharCount() int {
 	return len([]rune(ke.s))
+}
+
+// Mode returns kanji mode EncodingMode
+func (ke *KanjiEncoder) Mode() qrconst.EncodingMode {
+	return qrconst.KanjiMode
 }

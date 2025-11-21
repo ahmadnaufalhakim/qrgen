@@ -2,6 +2,8 @@ package qrencode
 
 import (
 	"fmt"
+
+	"github.com/ahmadnaufalhakim/qrgen/internal/qrconst"
 )
 
 type NumericEncoder struct {
@@ -75,4 +77,9 @@ func (ne *NumericEncoder) Encode() ([]string, error) {
 // the number of digits.
 func (ne *NumericEncoder) CharCount() int {
 	return len(ne.s)
+}
+
+// Mode returns numeric mode EncodingMode
+func (ne *NumericEncoder) Mode() qrconst.EncodingMode {
+	return qrconst.NumericMode
 }

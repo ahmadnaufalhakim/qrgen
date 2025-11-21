@@ -3,6 +3,7 @@ package qrencode
 import (
 	"fmt"
 
+	"github.com/ahmadnaufalhakim/qrgen/internal/qrconst"
 	"github.com/ahmadnaufalhakim/qrgen/internal/tables"
 )
 
@@ -73,4 +74,9 @@ func (ae *AlphanumericEncoder) Encode() ([]string, error) {
 // symbols in the allowed 45-character set.
 func (ae *AlphanumericEncoder) CharCount() int {
 	return len(ae.s)
+}
+
+// Mode returns alphanumeric mode EncodingMode
+func (ae *AlphanumericEncoder) Mode() qrconst.EncodingMode {
+	return qrconst.AlphanumericMode
 }

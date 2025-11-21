@@ -5,6 +5,7 @@ import "github.com/ahmadnaufalhakim/qrgen/internal/qrconst"
 type Encoder interface {
 	Encode() ([]string, error)
 	CharCount() int
+	Mode() qrconst.EncodingMode
 }
 
 func NewEncoder(s string) Encoder {
