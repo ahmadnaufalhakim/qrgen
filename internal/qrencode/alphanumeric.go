@@ -51,6 +51,14 @@ func encodeAlphanumericBits(group string, groupSize int) string {
 	return fmt.Sprintf(binaryFormat, alphanumericStrToInt(group))
 }
 
+// Encode encodes the input string in QR Code Alphanumeric Mode.
+//
+// The string is split into groups of two characters. Each pair is
+// encoded into an 11-bit value: (45 * value1 + value2).
+// If the input has an odd number of characters, the final single
+// character is encoded into a 6-bit value.
+//
+// The returned slice contains each group’s bit representation.
 func (ae *AlphanumericEncoder) Encode() ([]string, error) {
 	var bits []string
 	for _, group := range alphanumericSplit(ae.s) {
@@ -58,4 +66,11 @@ func (ae *AlphanumericEncoder) Encode() ([]string, error) {
 	}
 
 	return bits, nil
+}
+
+// CharCount returns the number of characters in the input string.
+// In Alphanumeric mode, character count is defined as the number of
+// symbols in the allowed 45-character set.
+func (ae *AlphanumericEncoder) CharCount() int {
+	return len(ae.s)
 }

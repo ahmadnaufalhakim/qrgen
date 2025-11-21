@@ -51,6 +51,16 @@ func encodeNumericBits(group string, groupSize int) string {
 	return fmt.Sprintf(binaryFormat, numericStrToInt(group))
 }
 
+// Encode encodes the numeric string into a slice of bit strings,
+// following QR Code Numeric Mode rules.
+//
+// The string is split into groups of 1–3 digits (as required by
+// the QR specification). Each group is encoded into:
+//   - 10 bits for 3 digits
+//   - 7 bits  for 2 digits
+//   - 4 bits  for 1 digit
+//
+// The returned slice contains each group’s bit representation.
 func (ne *NumericEncoder) Encode() ([]string, error) {
 	var bits []string
 	for _, group := range numericSplit(ne.s) {
@@ -58,4 +68,11 @@ func (ne *NumericEncoder) Encode() ([]string, error) {
 	}
 
 	return bits, nil
+}
+
+// CharCount returns the number of characters in the numeric string.
+// In Numeric mode, the QR spec defines the "character count" simply as
+// the number of digits.
+func (ne *NumericEncoder) CharCount() int {
+	return len(ne.s)
 }

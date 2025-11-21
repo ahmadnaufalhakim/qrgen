@@ -42,6 +42,13 @@ func kanjiRuneToInt(r rune) (int, error) {
 	return int(msb*0x00C0 + lsb), nil
 }
 
+// Encode encodes the input string into QR Code Kanji Mode.
+//
+// Each rune is converted into its corresponding Shift JIS value.
+// Valid QR Kanji must fall within the ranges used by the QR spec.
+// The Shift JIS value is then transformed into a 13-bit code word.
+//
+// If a rune cannot be mapped to a valid QR Kanji code, an error is returned.
 func (ke *KanjiEncoder) Encode() ([]string, error) {
 	var bits []string
 	for _, kanjiRune := range ke.s {
@@ -54,4 +61,10 @@ func (ke *KanjiEncoder) Encode() ([]string, error) {
 	}
 
 	return bits, nil
+}
+
+// CharCount returns the number of Kanji characters in the string.
+// In Kanji mode, each rune corresponds to one encoded Kanji symbol.
+func (ke *KanjiEncoder) CharCount() int {
+	return len([]rune(ke.s))
 }
