@@ -8,37 +8,6 @@ import (
 	"golang.org/x/text/encoding/japanese"
 )
 
-func DetermineVersion(
-	encMode qrconst.EncodingMode,
-	errCorrectionLevel qrconst.ErrorCorrectionLevel,
-	charCount int,
-) (int, error) {
-	switch errCorrectionLevel {
-	case qrconst.L, qrconst.M, qrconst.Q, qrconst.H:
-		charCapacity := tables.CharacterCapacities[encMode][errCorrectionLevel]
-
-		for version := range 40 {
-			lowCharacterCapacity := charCapacity[version]
-			highCharacterCapacity := charCapacity[40-version-1]
-
-			if lowCharacterCapacity >= charCount {
-				return version + 1, nil
-			}
-			if highCharacterCapacity < charCount {
-				if version != 0 {
-					return 40 - version + 1, nil
-				} else {
-					return 0, fmt.Errorf("no version found that can encode %d characters", charCount)
-				}
-			}
-		}
-		return 0, fmt.Errorf("no version found that can encode %d characters", charCount)
-
-	default:
-		return 0, fmt.Errorf("invalid error correction level")
-	}
-}
-
 func DetermineEncodingMode(s string) qrconst.EncodingMode {
 	isNumeric := true
 	isAlphanumeric := true
@@ -88,4 +57,35 @@ func DetermineEncodingMode(s string) qrconst.EncodingMode {
 		return qrconst.KanjiMode
 	}
 	return qrconst.ByteMode
+}
+
+func DetermineVersion(
+	encMode qrconst.EncodingMode,
+	errCorrectionLevel qrconst.ErrorCorrectionLevel,
+	charCount int,
+) (int, error) {
+	switch errCorrectionLevel {
+	case qrconst.L, qrconst.M, qrconst.Q, qrconst.H:
+		charCapacity := tables.CharacterCapacities[encMode][errCorrectionLevel]
+
+		for version := range 40 {
+			lowCharacterCapacity := charCapacity[version]
+			highCharacterCapacity := charCapacity[40-version-1]
+
+			if lowCharacterCapacity >= charCount {
+				return version + 1, nil
+			}
+			if highCharacterCapacity < charCount {
+				if version != 0 {
+					return 40 - version + 1, nil
+				} else {
+					return 0, fmt.Errorf("no version found that can encode %d characters", charCount)
+				}
+			}
+		}
+		return 0, fmt.Errorf("no version found that can encode %d characters", charCount)
+
+	default:
+		return 0, fmt.Errorf("invalid error correction level")
+	}
 }
