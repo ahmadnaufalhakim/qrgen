@@ -40,64 +40,52 @@ func DetermineVersion(
 }
 
 func DetermineEncodingMode(s string) qrconst.EncodingMode {
-	if isNumeric(s) {
+	isNumeric := true
+	isAlphanumeric := true
+	isShiftJIS := true
+
+	sjisEncoder := japanese.ShiftJIS.NewEncoder()
+
+	for _, r := range s {
+		if isNumeric || isAlphanumeric || isShiftJIS {
+			if isNumeric {
+				if r < '0' || r > '9' {
+					isNumeric = false
+				}
+			}
+
+			if isAlphanumeric {
+				if _, ok := tables.AlphanumericValues[r]; !ok {
+					isAlphanumeric = false
+				}
+			}
+
+			if isShiftJIS {
+				sjisBytes, err := sjisEncoder.Bytes([]byte(string(r)))
+
+				if err != nil || len(sjisBytes) != 2 {
+					isShiftJIS = false
+				} else {
+					sjisValue := (uint16(sjisBytes[0]) << 8) | uint16(sjisBytes[1])
+					if !(sjisValue >= 0x8140 && sjisValue <= 0x9FFC) &&
+						!(sjisValue >= 0xE040 && sjisValue <= 0xEBBF) {
+						isShiftJIS = false
+					}
+				}
+			}
+		} else {
+			return qrconst.ByteMode
+		}
+	}
+
+	if isNumeric {
 		return qrconst.NumericMode
 	}
-
-	if isAlphanumeric(s) {
+	if isAlphanumeric {
 		return qrconst.AlphanumericMode
 	}
-
-	if isShiftJIS(s) {
+	if isShiftJIS {
 		return qrconst.KanjiMode
 	}
-
 	return qrconst.ByteMode
-}
-
-func isNumeric(s string) bool {
-	for _, r := range s {
-		if r < '0' || r > '9' {
-			return false
-		}
-	}
-
-	return true
-}
-
-func isAlphanumeric(s string) bool {
-	for _, r := range s {
-		if _, ok := tables.AlphanumericValues[r]; !ok {
-			return false
-		}
-	}
-
-	return true
-}
-
-func isShiftJIS(s string) bool {
-	sjisEncoder := japanese.ShiftJIS.NewEncoder()
-	for _, r := range s {
-		sjisBytes, err := sjisEncoder.Bytes([]byte(string(r)))
-		if err != nil {
-			return false
-		}
-
-		// Check if the character can be converted to 2-bytes Shift JIS character
-		if len(sjisBytes) != 2 {
-			return false
-		}
-
-		// Check if the Shift JIS byte value is in the range
-		// of 0x8140 to 0x9FFC, or 0xE040 to 0xEBBF
-		sjisValue := (uint16(sjisBytes[0]) << 8) | uint16(sjisBytes[1])
-		if (sjisValue >= 0x8140 && sjisValue <= 0x9FFC) ||
-			(sjisValue >= 0xE040 && sjisValue <= 0xEBBF) {
-			continue
-		} else {
-			return false
-		}
-	}
-
-	return true
 }
