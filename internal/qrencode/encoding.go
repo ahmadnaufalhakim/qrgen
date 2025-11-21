@@ -89,3 +89,27 @@ func DetermineVersion(
 		return 0, fmt.Errorf("invalid error correction level")
 	}
 }
+
+func ModeIndicator(encMode qrconst.EncodingMode) string {
+	return fmt.Sprintf("%04b", encMode)
+}
+
+func CharCountIndicator(
+	encMode qrconst.EncodingMode,
+	version int,
+	charCount int,
+) string {
+	var charCountFormat string
+	var idx int
+
+	if version >= 1 && version <= 9 {
+		idx = 0
+	} else if version >= 10 && version <= 26 {
+		idx = 1
+	} else if version >= 27 && version <= 40 {
+		idx = 2
+	}
+	charCountFormat = fmt.Sprintf("%%0%db", tables.CharacterCountIndicatorBits[encMode][idx])
+
+	return fmt.Sprintf(charCountFormat, charCount)
+}
