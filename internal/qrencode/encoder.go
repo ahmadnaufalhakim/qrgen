@@ -4,6 +4,7 @@ import "github.com/ahmadnaufalhakim/qrgen/internal/qrconst"
 
 type Encoder interface {
 	Encode() ([]string, error)
+	CharCount() int
 }
 
 func NewEncoder(s string) Encoder {
