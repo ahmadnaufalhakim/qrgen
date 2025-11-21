@@ -3,24 +3,45 @@ package main
 import (
 	"fmt"
 
+	"github.com/ahmadnaufalhakim/qrgen/internal/qrconst"
 	"github.com/ahmadnaufalhakim/qrgen/internal/qrencode"
 )
 
 func main() {
 
-	NumericString := "8675309"
-	fmt.Println(qrencode.DetermineEncodingMode(NumericString))
-
-	AlphanumericString := "HELLO WORLD"
-	fmt.Println(qrencode.DetermineEncodingMode(AlphanumericString))
-
-	KanjiString := "だから僕は音楽をやめた"
-	fmt.Println(qrencode.DetermineEncodingMode(KanjiString))
-
-	ByteString := "Hello, world!"
-	fmt.Println(qrencode.DetermineEncodingMode(ByteString))
+	// InputString := "8675309" //Numeric
+	InputString := "HELLO WORLD" //Alphanumeric
+	// InputString := "だから僕は音楽をやめた" //Kanji
+	// InputString := "Hello, 世界!" //Byte
 
 	////////////////////////////
-	QREncoder := qrencode.NewEncoder(ByteString)
-	fmt.Println(QREncoder.Encode())
+	QREncoder := qrencode.NewEncoder(InputString)
+	ErrorCorrectionLevel := qrconst.Q
+
+	version, err := qrencode.DetermineVersion(
+		QREncoder.Mode(),
+		ErrorCorrectionLevel,
+		QREncoder.CharCount(),
+	)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Printf("version: %d-%c\n", version, ErrorCorrectionLevel)
+
+	encodedData, err := QREncoder.Encode()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	bits := append([]string{
+		qrencode.ModeIndicator(QREncoder.Mode()),
+		qrencode.CharCountIndicator(
+			QREncoder.Mode(),
+			version,
+			QREncoder.CharCount(),
+		),
+	}, encodedData...)
+	fmt.Println(bits)
 }
