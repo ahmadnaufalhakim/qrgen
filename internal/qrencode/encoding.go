@@ -7,22 +7,22 @@ import (
 )
 
 func DetermineEncodingMode(s string) qrconst.EncodingMode {
-	if IsNumeric(s) {
+	if isNumeric(s) {
 		return qrconst.NumericMode
 	}
 
-	if IsAlphanumeric(s) {
+	if isAlphanumeric(s) {
 		return qrconst.AlphanumericMode
 	}
 
-	if IsShiftJIS(s) {
+	if isShiftJIS(s) {
 		return qrconst.KanjiMode
 	}
 
 	return qrconst.ByteMode
 }
 
-func IsNumeric(s string) bool {
+func isNumeric(s string) bool {
 	for _, r := range s {
 		if r < '0' || r > '9' {
 			return false
@@ -32,7 +32,7 @@ func IsNumeric(s string) bool {
 	return true
 }
 
-func IsAlphanumeric(s string) bool {
+func isAlphanumeric(s string) bool {
 	for _, r := range s {
 		if _, ok := tables.AlphanumericValues[r]; !ok {
 			return false
@@ -42,7 +42,7 @@ func IsAlphanumeric(s string) bool {
 	return true
 }
 
-func IsShiftJIS(s string) bool {
+func isShiftJIS(s string) bool {
 	sjisEncoder := japanese.ShiftJIS.NewEncoder()
 	for _, r := range s {
 		sjisBytes, err := sjisEncoder.Bytes([]byte(string(r)))
