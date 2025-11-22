@@ -51,17 +51,17 @@ func kanjiRuneToInt(r rune) (int, error) {
 //
 // If a rune cannot be mapped to a valid QR Kanji code, an error is returned.
 func (ke *KanjiEncoder) Encode() ([]string, error) {
-	var bits []string
+	var bitStrings []string
 	for _, kanjiRune := range ke.s {
 		kanjiInt, err := kanjiRuneToInt(kanjiRune)
 		if err != nil {
 			return nil, err
 		}
 
-		bits = append(bits, fmt.Sprintf("%013b", kanjiInt))
+		bitStrings = append(bitStrings, fmt.Sprintf("%013b", kanjiInt))
 	}
 
-	return bits, nil
+	return bitStrings, nil
 }
 
 // CharCount returns the number of Kanji characters in the string.

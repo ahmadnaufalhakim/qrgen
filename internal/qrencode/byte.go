@@ -22,12 +22,12 @@ func NewByteEncoder(s string) *ByteEncoder {
 // as required by the QR specification for Byte mode. Multi-byte UTF-8
 // characters will produce multiple encoded bytes.
 func (be *ByteEncoder) Encode() ([]string, error) {
-	var bits []string
+	var bitStrings []string
 	for i := 0; i < len(be.s); i++ {
-		bits = append(bits, fmt.Sprintf("%08b", be.s[i]))
+		bitStrings = append(bitStrings, fmt.Sprintf("%08b", be.s[i]))
 	}
 
-	return bits, nil
+	return bitStrings, nil
 }
 
 // CharCount returns the number of bytes in the UTF-8 string.

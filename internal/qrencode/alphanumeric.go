@@ -61,12 +61,12 @@ func encodeAlphanumericBits(group string, groupSize int) string {
 //
 // The returned slice contains each group’s bit representation.
 func (ae *AlphanumericEncoder) Encode() ([]string, error) {
-	var bits []string
+	var bitStrings []string
 	for _, group := range alphanumericSplit(ae.s) {
-		bits = append(bits, encodeAlphanumericBits(group, len(group)))
+		bitStrings = append(bitStrings, encodeAlphanumericBits(group, len(group)))
 	}
 
-	return bits, nil
+	return bitStrings, nil
 }
 
 // CharCount returns the number of characters in the input string.

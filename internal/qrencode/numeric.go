@@ -64,12 +64,12 @@ func encodeNumericBits(group string, groupSize int) string {
 //
 // The returned slice contains each group’s bit representation.
 func (ne *NumericEncoder) Encode() ([]string, error) {
-	var bits []string
+	var bitStrings []string
 	for _, group := range numericSplit(ne.s) {
-		bits = append(bits, encodeNumericBits(group, len(group)))
+		bitStrings = append(bitStrings, encodeNumericBits(group, len(group)))
 	}
 
-	return bits, nil
+	return bitStrings, nil
 }
 
 // CharCount returns the number of characters in the numeric string.
