@@ -2,6 +2,7 @@ package qrencode
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/ahmadnaufalhakim/qrgen/internal/qrconst"
 	"github.com/ahmadnaufalhakim/qrgen/internal/tables"
@@ -61,12 +62,12 @@ func DetermineEncodingMode(s string) qrconst.EncodingMode {
 
 func DetermineVersion(
 	encMode qrconst.EncodingMode,
-	errCorrectionLevel qrconst.ErrorCorrectionLevel,
+	ecLevel qrconst.ErrorCorrectionLevel,
 	charCount int,
 ) (int, error) {
-	switch errCorrectionLevel {
+	switch ecLevel {
 	case qrconst.L, qrconst.M, qrconst.Q, qrconst.H:
-		charCapacity := tables.CharacterCapacities[encMode][errCorrectionLevel]
+		charCapacity := tables.CharacterCapacities[encMode][ecLevel]
 
 		for version := range 40 {
 			lowCharacterCapacity := charCapacity[version]
@@ -112,4 +113,53 @@ func CharCountIndicator(
 	charCountFormat = fmt.Sprintf("%%0%db", tables.CharacterCountIndicatorBits[encMode][idx])
 
 	return fmt.Sprintf(charCountFormat, charCount)
+}
+
+func AssembleDataCodewords(
+	ecLevel qrconst.ErrorCorrectionLevel,
+	version int,
+	bitStrings []string,
+) ([]string, error) {
+	ecBlock := tables.ECBlocks[ecLevel][version-1]
+	totalDataCodewords := ecBlock.Group1Blocks*ecBlock.Group1DataCodewords + ecBlock.Group2Blocks*ecBlock.Group2DataCodewords
+	fmt.Println(ecBlock, totalDataCodewords*8)
+
+	var sb strings.Builder
+	for _, bitString := range bitStrings {
+		sb.WriteString(bitString)
+	}
+	fmt.Println(sb.String(), sb.Len())
+
+	// Add a terminator of 0s (if necessary)
+	terminatorLength := min(4, totalDataCodewords*8-sb.Len())
+	if terminatorLength < 0 {
+		return nil, fmt.Errorf("input bits exceed data capacity")
+	}
+	sb.WriteString(strings.Repeat("0", terminatorLength))
+	fmt.Println(sb.String(), sb.Len())
+
+	// Add more 0s to make the length of the bit string
+	// a multiple of 8
+	remainderLength := (8 - sb.Len()%8) % 8
+	sb.WriteString(strings.Repeat("0", remainderLength))
+	fmt.Println(sb.String(), sb.Len())
+
+	// Add pad bytes if the bit string is still too short
+	if sb.Len() < totalDataCodewords*8 {
+		pads := []int{236, 17}
+
+		totalPadBytes := (totalDataCodewords*8 - sb.Len()) / 8
+		for i := range totalPadBytes {
+			sb.WriteString(fmt.Sprintf("%08b", pads[i%2]))
+			fmt.Println(sb.String(), sb.Len())
+		}
+	}
+
+	// Group bit string into 8-bit codewords
+	var dataCodewords []string
+	for i := range totalDataCodewords {
+		dataCodewords = append(dataCodewords, sb.String()[i*8:i*8+8])
+	}
+
+	return dataCodewords, nil
 }
