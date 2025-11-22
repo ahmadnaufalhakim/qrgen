@@ -1,4 +1,4 @@
-package qrencode
+package encoder
 
 import (
 	"fmt"
