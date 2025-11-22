@@ -46,11 +46,27 @@ func main() {
 	}, encodedData...)
 	fmt.Println(bitStrings)
 
-	fmt.Println(qrencode.AssembleDataCodewords(
+	dataCodewords, err := qrencode.AssembleDataCodewords(
 		ErrorCorrectionLevel,
 		version,
 		bitStrings,
-	))
+	)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(dataCodewords)
+
+	groups, err := qrencode.GroupDataCodewords(
+		ErrorCorrectionLevel,
+		version,
+		dataCodewords,
+	)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(groups)
 
 	// // Sanity check
 	// // Error correction code words and block information
