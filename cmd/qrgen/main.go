@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/ahmadnaufalhakim/qrgen/internal/encoder"
 	"github.com/ahmadnaufalhakim/qrgen/internal/qrconst"
 	"github.com/ahmadnaufalhakim/qrgen/internal/qrencode"
 )
@@ -15,7 +16,7 @@ func main() {
 	// InputString := "Hello, 世界!" //Byte
 
 	////////////////////////////
-	QREncoder := qrencode.NewEncoder(InputString)
+	QREncoder := encoder.NewEncoder(InputString)
 	ErrorCorrectionLevel := qrconst.Q
 
 	version, err := qrencode.DetermineVersion(
