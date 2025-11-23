@@ -92,7 +92,7 @@ var DataCodewords = map[qrconst.ErrorCorrectionLevel][]int{
 	},
 }
 
-var GeneratorPolynomialCoefs = map[int][]uint8{
+var GeneratorPolynomial = map[int][]uint8{
 	7:  {1, 127, 122, 154, 164, 11, 68, 117},
 	10: {1, 216, 194, 159, 111, 199, 94, 95, 113, 157, 193},
 	13: {1, 137, 73, 227, 17, 177, 17, 52, 13, 46, 43, 83, 132, 120},
