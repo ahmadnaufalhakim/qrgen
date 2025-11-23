@@ -70,13 +70,11 @@ func AssembleDataCodewords(
 ) ([]string, error) {
 	ecBlock := tables.ECBlocks[ecLevel][version-1]
 	totalDataCodewords := ecBlock.Group1Blocks*ecBlock.Group1DataCodewords + ecBlock.Group2Blocks*ecBlock.Group2DataCodewords
-	fmt.Println(ecBlock, totalDataCodewords*8)
 
 	var sb strings.Builder
 	for _, bitString := range bitStrings {
 		sb.WriteString(bitString)
 	}
-	fmt.Println(sb.String(), sb.Len())
 
 	// Add a terminator of 0s (if necessary)
 	terminatorLength := min(4, totalDataCodewords*8-sb.Len())
@@ -84,13 +82,11 @@ func AssembleDataCodewords(
 		return nil, fmt.Errorf("input bits exceed data capacity")
 	}
 	sb.WriteString(strings.Repeat("0", terminatorLength))
-	fmt.Println(sb.String(), sb.Len())
 
 	// Add more 0s to make the length of the bit string
 	// a multiple of 8
 	remainderLength := (8 - sb.Len()%8) % 8
 	sb.WriteString(strings.Repeat("0", remainderLength))
-	fmt.Println(sb.String(), sb.Len())
 
 	// Add pad bytes if the bit string is still too short
 	if sb.Len() < totalDataCodewords*8 {
@@ -99,7 +95,6 @@ func AssembleDataCodewords(
 		totalPadBytes := (totalDataCodewords*8 - sb.Len()) / 8
 		for i := range totalPadBytes {
 			sb.WriteString(fmt.Sprintf("%08b", pads[i%2]))
-			fmt.Println(sb.String(), sb.Len())
 		}
 	}
 
