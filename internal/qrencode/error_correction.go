@@ -12,37 +12,37 @@ func GroupDataCodewords(
 	version int,
 	dataCodewords []string,
 ) ([][][]string, error) {
-	ecBlock := tables.ECBlocks[ecLevel][version-1]
+	ecBlockInfo := tables.ECBlockInfos[ecLevel][version-1]
 
-	groups := make([][][]string, 0, 2)
+	dataGroups := make([][][]string, 0, 2)
 
 	// Fill group 1
-	group1 := make([][]string, ecBlock.Group1Blocks)
+	group1 := make([][]string, ecBlockInfo.Group1Blocks)
 	start := 0
-	for block := range ecBlock.Group1Blocks {
-		end := start + ecBlock.Group1DataCodewords
+	for block := range ecBlockInfo.Group1Blocks {
+		end := start + ecBlockInfo.Group1DataCodewords
 		group1[block] = append([]string{}, dataCodewords[start:end]...)
 		start = end
 	}
-	groups = append(groups, group1)
+	dataGroups = append(dataGroups, group1)
 
 	// Fill group 2 (if present)
-	if ecBlock.Group2Blocks > 0 {
-		group2 := make([][]string, ecBlock.Group2Blocks)
-		for block := range ecBlock.Group2Blocks {
-			end := start + ecBlock.Group2DataCodewords
+	if ecBlockInfo.Group2Blocks > 0 {
+		group2 := make([][]string, ecBlockInfo.Group2Blocks)
+		for block := range ecBlockInfo.Group2Blocks {
+			end := start + ecBlockInfo.Group2DataCodewords
 			group2[block] = append([]string{}, dataCodewords[start:end]...)
 			start = end
 		}
-		groups = append(groups, group2)
+		dataGroups = append(dataGroups, group2)
 	}
 
-	return groups, nil
+	return dataGroups, nil
 }
 
-func MessagePolynomial(block []string) ([]uint8, error) {
+func MessagePolynomial(dataBlock []string) ([]uint8, error) {
 	var m []uint8
-	for _, dataCodeword := range block {
+	for _, dataCodeword := range dataBlock {
 		b, err := bitStringToByte(dataCodeword)
 		if err != nil {
 			return nil, err
@@ -93,6 +93,32 @@ func PolynomialsProduct(polynomials ...[]uint8) ([]uint8, error) {
 	}
 
 	return prod, nil
+}
+
+func GenerateErrorCorrectionBlocks(
+	ecLevel qrconst.ErrorCorrectionLevel,
+	version int,
+	dataBlocks [][]string,
+) ([][]uint8, error) {
+	ecBlockInfo := tables.ECBlockInfos[ecLevel][version-1]
+	n := ecBlockInfo.ECCodewordsPerBlock
+	g, err := GeneratorPolynomial(n)
+	if err != nil {
+		return nil, err
+	}
+
+	ecBlocks := make([][]uint8, ecBlockInfo.Group1Blocks+ecBlockInfo.Group2Blocks)
+	for i, dataBlock := range dataBlocks {
+		m, err := MessagePolynomial(dataBlock)
+		if err != nil {
+			return nil, err
+		}
+
+		ecCodewords := divideTwoPolynomials(m, g)
+		ecBlocks[i] = ecCodewords
+	}
+
+	return ecBlocks, nil
 }
 
 func bitStringToByte(s string) (uint8, error) {

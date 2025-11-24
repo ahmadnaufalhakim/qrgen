@@ -10,7 +10,7 @@ type ECBlockInfo struct {
 	Group2DataCodewords int
 }
 
-var ECBlocks = map[qrconst.ErrorCorrectionLevel][]ECBlockInfo{
+var ECBlockInfos = map[qrconst.ErrorCorrectionLevel][]ECBlockInfo{
 	qrconst.L: {
 		{7, 1, 19, 0, 0}, {10, 1, 34, 0, 0}, {15, 1, 55, 0, 0}, {20, 1, 80, 0, 0}, {26, 1, 108, 0, 0},
 		{18, 2, 68, 0, 0}, {20, 2, 78, 0, 0}, {24, 2, 97, 0, 0}, {30, 2, 116, 0, 0}, {18, 2, 68, 2, 69},
