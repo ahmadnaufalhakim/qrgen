@@ -63,12 +63,12 @@ func GeneratorPolynomial(n int) ([]uint8, error) {
 	}
 
 	var polynomials [][]uint8
-	for i := n; i >= 0; i-- {
+	for i := n; i > 0; i-- {
 		if g, ok := tables.GeneratorPolynomial[i]; ok {
 			polynomials = append(polynomials, g)
 			break
 		} else {
-			polynomials = append(polynomials, []uint8{1, tables.AntilogGF256[i]})
+			polynomials = append(polynomials, []uint8{1, tables.AntilogGF256[i-1]})
 		}
 	}
 
