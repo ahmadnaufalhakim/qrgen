@@ -20,7 +20,7 @@ func GroupDataCodewords(
 	group1 := make([][]string, ecBlockInfo.Group1Blocks)
 	start := 0
 	for block := range ecBlockInfo.Group1Blocks {
-		end := start + ecBlockInfo.Group1DataCodewords
+		end := start + ecBlockInfo.Group1DataCodewordsPerBlock
 		group1[block] = append([]string{}, dataCodewords[start:end]...)
 		start = end
 	}
@@ -30,7 +30,7 @@ func GroupDataCodewords(
 	if ecBlockInfo.Group2Blocks > 0 {
 		group2 := make([][]string, ecBlockInfo.Group2Blocks)
 		for block := range ecBlockInfo.Group2Blocks {
-			end := start + ecBlockInfo.Group2DataCodewords
+			end := start + ecBlockInfo.Group2DataCodewordsPerBlock
 			group2[block] = append([]string{}, dataCodewords[start:end]...)
 			start = end
 		}

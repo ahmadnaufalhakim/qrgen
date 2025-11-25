@@ -3,11 +3,11 @@ package tables
 import "github.com/ahmadnaufalhakim/qrgen/internal/qrconst"
 
 type ECBlockInfo struct {
-	ECCodewordsPerBlock int
-	Group1Blocks        int
-	Group1DataCodewords int
-	Group2Blocks        int
-	Group2DataCodewords int
+	ECCodewordsPerBlock         int
+	Group1Blocks                int
+	Group1DataCodewordsPerBlock int
+	Group2Blocks                int
+	Group2DataCodewordsPerBlock int
 }
 
 var ECBlockInfos = map[qrconst.ErrorCorrectionLevel][]ECBlockInfo{

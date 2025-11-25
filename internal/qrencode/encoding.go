@@ -69,7 +69,7 @@ func AssembleDataCodewords(
 	bitStrings []string,
 ) ([]string, error) {
 	ecBlockInfo := tables.ECBlockInfos[ecLevel][version-1]
-	totalDataCodewords := ecBlockInfo.Group1Blocks*ecBlockInfo.Group1DataCodewords + ecBlockInfo.Group2Blocks*ecBlockInfo.Group2DataCodewords
+	totalDataCodewords := ecBlockInfo.Group1Blocks*ecBlockInfo.Group1DataCodewordsPerBlock + ecBlockInfo.Group2Blocks*ecBlockInfo.Group2DataCodewordsPerBlock
 
 	var sb strings.Builder
 	for _, bitString := range bitStrings {
