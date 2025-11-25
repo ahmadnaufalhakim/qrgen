@@ -72,25 +72,12 @@ func GeneratorPolynomial(n int) ([]uint8, error) {
 		}
 	}
 
-	prod, err := PolynomialsProduct(polynomials...)
+	prod, err := polynomialsProduct(polynomials...)
 	if err != nil {
 		return nil, err
 	}
 
 	tables.GeneratorPolynomial[n] = prod
-
-	return prod, nil
-}
-
-func PolynomialsProduct(polynomials ...[]uint8) ([]uint8, error) {
-	if len(polynomials) == 0 {
-		return nil, fmt.Errorf("must provide at least 1 polynomial")
-	}
-
-	prod := []uint8{1}
-	for _, p := range polynomials {
-		prod = multiplyTwoPolynomials(prod, p)
-	}
 
 	return prod, nil
 }
@@ -119,116 +106,4 @@ func GenerateErrorCorrectionBlocks(
 	}
 
 	return ecBlocks, nil
-}
-
-func bitStringToByte(s string) (uint8, error) {
-	if len(s) != 8 {
-		return 0, fmt.Errorf("must be 8 bits")
-	}
-
-	b := uint8(0)
-	for i := range 8 {
-		b <<= 1
-		if s[i] == '1' {
-			b |= 1
-		} else if s[i] != '0' {
-			return 0, fmt.Errorf("invalid bit")
-		}
-	}
-
-	return b, nil
-}
-
-func addTwoPolynomials(a, b []uint8) []uint8 {
-	m := len(a)
-	n := len(b)
-	maxDegree := max(m, n)
-
-	result := make([]uint8, maxDegree)
-
-	for i := range maxDegree {
-		x := uint8(0)
-		if i < m {
-			x = a[m-i-1]
-		}
-
-		y := uint8(0)
-		if i < n {
-			y = b[n-i-1]
-		}
-
-		result[maxDegree-i-1] = addGF256(x, y)
-	}
-
-	return result
-}
-
-func multiplyTwoPolynomials(a, b []uint8) []uint8 {
-	m := len(a)
-	n := len(b)
-
-	result := make([]uint8, m+n-1)
-
-	for i := range m {
-		for j := range n {
-			result[i+j] = addGF256(result[i+j], mulGF256(a[i], b[j]))
-		}
-	}
-
-	return result
-}
-
-func divideTwoPolynomials(a, b []uint8) []uint8 {
-	m := len(a)
-	n := len(b)
-
-	a = append(a, make([]uint8, n-1)...)
-	b = append(b, make([]uint8, m-1)...)
-
-	dividend := a
-	divisor := make([]uint8, len(b))
-	copy(divisor, b)
-
-	for i := range m {
-		aLeadCoefExp := tables.LogGF256[dividend[0]]
-		bLeadCoefExp := tables.LogGF256[b[0]]
-
-		multiplierExp := 255 + uint16(aLeadCoefExp) - uint16(bLeadCoefExp)
-		for j := range n {
-			divisor[j] = mulGF256(divisor[j], tables.AntilogGF256[multiplierExp%255])
-		}
-
-		dividend = addTwoPolynomials(dividend, divisor)
-		dividend = discardLeadingZeros(dividend)
-
-		divisor = make([]uint8, len(b)-i-1)
-		copy(divisor, b[:len(b)-i-1])
-	}
-
-	return dividend
-}
-
-func discardLeadingZeros(polynomial []uint8) []uint8 {
-	for i, coef := range polynomial {
-		if coef != 0 {
-			return polynomial[i:]
-		}
-	}
-
-	return []uint8{}
-}
-
-func addGF256(x, y uint8) uint8 {
-	return x ^ y
-}
-
-func mulGF256(x, y uint8) uint8 {
-	if x == 0 || y == 0 {
-		return 0
-	}
-
-	logX := uint16(tables.LogGF256[x])
-	logY := uint16(tables.LogGF256[y])
-
-	return tables.AntilogGF256[(logX+logY)%255]
 }
