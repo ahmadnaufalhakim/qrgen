@@ -19,3 +19,17 @@ func bitStringToByte(s string) (uint8, error) {
 
 	return b, nil
 }
+
+func byteToBitString(b uint8) string {
+	buf := [8]uint8{}
+	for i := range 8 {
+		// Check bit from lrft
+		if b&(1<<(7-i)) != 0 {
+			buf[i] = '1'
+		} else {
+			buf[i] = '0'
+		}
+	}
+
+	return string(buf[:])
+}
