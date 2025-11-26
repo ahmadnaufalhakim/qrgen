@@ -11,11 +11,12 @@ import (
 )
 
 type QRCode struct {
-	Version  int
-	ECLevel  qrconst.ErrorCorrectionLevel
-	Size     int
-	Modules  [][]bool
-	Patterns [][]qrconst.FunctionPattern
+	Version     int
+	ECLevel     qrconst.ErrorCorrectionLevel
+	Size        int
+	MessageBits string
+	Modules     [][]bool
+	Patterns    [][]qrconst.FunctionPattern
 }
 
 func NewQRCode(
@@ -24,6 +25,7 @@ func NewQRCode(
 	messageBitString string,
 ) *QRCode {
 	size := (version-1)*4 + 21
+	messageBits := messageBitString
 	modules := make([][]bool, size)
 	patterns := make([][]qrconst.FunctionPattern, size)
 	for i := range size {
@@ -32,11 +34,12 @@ func NewQRCode(
 	}
 
 	qrcode := &QRCode{
-		Version:  version,
-		ECLevel:  ecLevel,
-		Size:     size,
-		Modules:  modules,
-		Patterns: patterns,
+		Version:     version,
+		ECLevel:     ecLevel,
+		Size:        size,
+		MessageBits: messageBits,
+		Modules:     modules,
+		Patterns:    patterns,
 	}
 
 	qrcode.PlaceFinderPatterns()
@@ -46,6 +49,7 @@ func NewQRCode(
 	qrcode.PlaceDarkModule()
 	qrcode.ReserveFormatInformationArea()
 	qrcode.ReserveVersionInformationArea()
+	qrcode.PlaceMessageBits()
 
 	return qrcode
 }
@@ -189,13 +193,13 @@ func (qr *QRCode) ReserveFormatInformationArea() {
 		}
 
 		// Reserve one-module strip near the top-right finder pattern
-		if qr.Patterns[startPos[1][0]+8][startPos[1][1]-1+j].IsUnoccupied() {
-			qr.Patterns[startPos[1][0]+8][startPos[1][1]-1+j] = qrconst.FPFormatInfo
+		if qr.Patterns[startPos[1][0]+8][min(startPos[1][1]-1+j, qr.Size-1)].IsUnoccupied() {
+			qr.Patterns[startPos[1][0]+8][min(startPos[1][1]-1+j, qr.Size-1)] = qrconst.FPFormatInfo
 		}
 
 		// Reserve one-module strip near the bottom-left finder pattern
-		if qr.Patterns[startPos[2][0]-1+i][startPos[2][1]+8].IsUnoccupied() {
-			qr.Patterns[startPos[2][0]-1+i][startPos[2][1]+8] = qrconst.FPSeparator
+		if qr.Patterns[min(startPos[2][0]-1+i, qr.Size-1)][startPos[2][1]+8].IsUnoccupied() {
+			qr.Patterns[min(startPos[2][0]-1+i, qr.Size-1)][startPos[2][1]+8] = qrconst.FPFormatInfo
 		}
 	}
 }
@@ -222,6 +226,46 @@ func (qr *QRCode) ReserveVersionInformationArea() {
 		for j := range 6 {
 			qr.Patterns[startPos[1][0]-4+i][startPos[1][1]+j] = qrconst.FPVersionInfo
 		}
+	}
+}
+
+func (qr *QRCode) PlaceMessageBits() {
+	upward := true
+	msgBitIdx := 0
+
+	// Calculate both row and column based on given index,
+	// upward condition, and column.
+	row := func(idx int, upward bool) int {
+		if upward {
+			return qr.Size - 1 - idx/2
+		} else {
+			return idx / 2
+		}
+	}
+	col := func(idx, j int) int {
+		return j - idx%2
+	}
+
+	for j := qr.Size - 1; j > 0; j -= 2 {
+		// Check if current column interferes with vertical timing pattern
+		// If so, shift the current column once to the left
+		if j == 6 {
+			j--
+		}
+
+		for idx := range 2 * qr.Size {
+			if qr.Patterns[row(idx, upward)][col(idx, j)].IsUnoccupied() {
+				if qr.MessageBits[msgBitIdx] == '1' {
+					qr.Modules[row(idx, upward)][col(idx, j)] = true
+				} else {
+					qr.Modules[row(idx, upward)][col(idx, j)] = false
+				}
+				qr.Patterns[row(idx, upward)][col(idx, j)] = qrconst.FPMessageBit
+				msgBitIdx++
+			}
+		}
+
+		upward = !upward
 	}
 }
 

@@ -11,6 +11,7 @@ const (
 	FPDarkModule
 	FPFormatInfo
 	FPVersionInfo
+	FPMessageBit
 )
 
 func (fp FunctionPattern) IsOccupied() bool {
