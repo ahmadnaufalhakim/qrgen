@@ -42,6 +42,7 @@ func NewQRCode(
 	qrcode.PlaceFinderPatterns()
 	qrcode.PlaceSeparators()
 	qrcode.PlaceAlignmentPattern()
+	qrcode.PlaceTimingPattern()
 
 	return qrcode
 }
@@ -134,6 +135,30 @@ func (qr *QRCode) PlaceAlignmentPattern() {
 		}
 	}
 
+}
+
+func (qr *QRCode) PlaceTimingPattern() {
+	startPos := [3][2]int{
+		{0, 0},
+		{0, qr.Size - 7},
+		{qr.Size - 7, 0},
+	}
+
+	module := true
+	// Place vertical timing pattern if not occupied by another function pattern
+	for i := startPos[0][0] + 6; i < startPos[2][0]; i++ {
+		if !qr.Function[i][6] {
+			qr.Modules[i][6] = module
+		}
+		module = !module
+	}
+	// Place horizontal timing pattern if not occupied by another function pattern
+	for j := startPos[0][0] + 6; j < startPos[2][0]; j++ {
+		if !qr.Function[6][j] {
+			qr.Modules[6][j] = module
+		}
+		module = !module
+	}
 }
 
 func (qr *QRCode) RenderPNG(filename string, scale int) error {
