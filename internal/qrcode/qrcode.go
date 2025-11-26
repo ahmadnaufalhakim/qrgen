@@ -15,7 +15,7 @@ type QRCode struct {
 	ECLevel  qrconst.ErrorCorrectionLevel
 	Size     int
 	Modules  [][]bool
-	Function [][]bool
+	Patterns [][]qrconst.FunctionPattern
 }
 
 func NewQRCode(
@@ -25,10 +25,10 @@ func NewQRCode(
 ) *QRCode {
 	size := (version-1)*4 + 21
 	modules := make([][]bool, size)
-	function := make([][]bool, size)
+	patterns := make([][]qrconst.FunctionPattern, size)
 	for i := range size {
 		modules[i] = make([]bool, size)
-		function[i] = make([]bool, size)
+		patterns[i] = make([]qrconst.FunctionPattern, size)
 	}
 
 	qrcode := &QRCode{
@@ -36,7 +36,7 @@ func NewQRCode(
 		ECLevel:  ecLevel,
 		Size:     size,
 		Modules:  modules,
-		Function: function,
+		Patterns: patterns,
 	}
 
 	qrcode.PlaceFinderPatterns()
@@ -69,7 +69,7 @@ func (qr *QRCode) PlaceFinderPatterns() {
 				}
 
 				qr.Modules[pos[0]+i][pos[1]+j] = module
-				qr.Function[pos[0]+i][pos[1]+j] = true
+				qr.Patterns[pos[0]+i][pos[1]+j] = qrconst.FPFinder
 			}
 		}
 	}
@@ -86,20 +86,20 @@ func (qr *QRCode) PlaceSeparators() {
 		// Top left
 		qr.Modules[startPos[0][0]+i][startPos[0][1]+7] = false
 		qr.Modules[startPos[0][0]+7][startPos[0][1]+j] = false
-		qr.Function[startPos[0][0]+i][startPos[0][1]+7] = true
-		qr.Function[startPos[0][0]+7][startPos[0][1]+j] = true
+		qr.Patterns[startPos[0][0]+i][startPos[0][1]+7] = qrconst.FPSeparator
+		qr.Patterns[startPos[0][0]+7][startPos[0][1]+j] = qrconst.FPSeparator
 
 		// Top right
 		qr.Modules[startPos[1][0]+i][startPos[1][1]-1] = false
 		qr.Modules[startPos[1][0]+7][startPos[1][1]-1+j] = false
-		qr.Function[startPos[1][0]+i][startPos[1][1]-1] = true
-		qr.Function[startPos[1][0]+7][startPos[1][1]-1+j] = true
+		qr.Patterns[startPos[1][0]+i][startPos[1][1]-1] = qrconst.FPSeparator
+		qr.Patterns[startPos[1][0]+7][startPos[1][1]-1+j] = qrconst.FPSeparator
 
 		// Bottom left
 		qr.Modules[startPos[2][0]-1+i][startPos[2][1]+7] = false
 		qr.Modules[startPos[2][0]-1][startPos[2][1]+j] = false
-		qr.Function[startPos[2][0]-1+i][startPos[2][1]+7] = true
-		qr.Function[startPos[2][0]-1][startPos[2][1]+j] = true
+		qr.Patterns[startPos[2][0]-1+i][startPos[2][1]+7] = qrconst.FPSeparator
+		qr.Patterns[startPos[2][0]-1][startPos[2][1]+j] = qrconst.FPSeparator
 	}
 }
 
@@ -114,7 +114,7 @@ func (qr *QRCode) PlaceAlignmentPattern() {
 	}
 
 	for _, centerPos := range alignmentCenterPos {
-		if qr.Function[centerPos[0]][centerPos[1]] {
+		if qr.Patterns[centerPos[0]][centerPos[1]] != qrconst.FPUnoccupied {
 			continue
 		}
 
@@ -131,7 +131,7 @@ func (qr *QRCode) PlaceAlignmentPattern() {
 				}
 
 				qr.Modules[centerPos[0]-2+i][centerPos[1]-2+j] = module
-				qr.Function[centerPos[0]-2+i][centerPos[1]-2+j] = true
+				qr.Patterns[centerPos[0]-2+i][centerPos[1]-2+j] = qrconst.FPAlignment
 			}
 		}
 	}
@@ -148,15 +148,17 @@ func (qr *QRCode) PlaceTimingPattern() {
 	module := true
 	// Place vertical timing pattern if not occupied by another function pattern
 	for i := startPos[0][0] + 6; i < startPos[2][0]; i++ {
-		if !qr.Function[i][6] {
+		if qr.Patterns[i][6].IsUnoccupied() {
 			qr.Modules[i][6] = module
+			qr.Patterns[i][6] = qrconst.FPTiming
 		}
 		module = !module
 	}
 	// Place horizontal timing pattern if not occupied by another function pattern
 	for j := startPos[0][0] + 6; j < startPos[2][0]; j++ {
-		if !qr.Function[6][j] {
+		if qr.Patterns[6][j].IsUnoccupied() {
 			qr.Modules[6][j] = module
+			qr.Patterns[6][j] = qrconst.FPTiming
 		}
 		module = !module
 	}
@@ -165,7 +167,7 @@ func (qr *QRCode) PlaceTimingPattern() {
 func (qr *QRCode) PlaceDarkModule() {
 	version := qr.Version
 	qr.Modules[4*version+9][8] = true
-	qr.Function[4*version+9][8] = true
+	qr.Patterns[4*version+9][8] = qrconst.FPDarkModule
 }
 
 func (qr *QRCode) RenderPNG(filename string, scale int) error {
