@@ -44,6 +44,8 @@ func NewQRCode(
 	qrcode.PlaceAlignmentPattern()
 	qrcode.PlaceTimingPattern()
 	qrcode.PlaceDarkModule()
+	qrcode.ReserveFormatInformationArea()
+	qrcode.ReserveVersionInformationArea()
 
 	return qrcode
 }
@@ -168,6 +170,59 @@ func (qr *QRCode) PlaceDarkModule() {
 	version := qr.Version
 	qr.Modules[4*version+9][8] = true
 	qr.Patterns[4*version+9][8] = qrconst.FPDarkModule
+}
+
+func (qr *QRCode) ReserveFormatInformationArea() {
+	startPos := [3][2]int{
+		{0, 0},
+		{0, qr.Size - 7},
+		{qr.Size - 7, 0},
+	}
+
+	for i, j := 0, 0; i < 9 && j < 9; i, j = i+1, j+1 {
+		// Reserve two-module strip near the top-left finder pattern
+		if qr.Patterns[startPos[0][0]+i][startPos[0][1]+8].IsUnoccupied() {
+			qr.Patterns[startPos[0][0]+i][startPos[0][1]+8] = qrconst.FPFormatInfo
+		}
+		if qr.Patterns[startPos[0][0]+8][startPos[0][1]+j].IsUnoccupied() {
+			qr.Patterns[startPos[0][0]+8][startPos[0][1]+j] = qrconst.FPFormatInfo
+		}
+
+		// Reserve one-module strip near the top-right finder pattern
+		if qr.Patterns[startPos[1][0]+8][startPos[1][1]-1+j].IsUnoccupied() {
+			qr.Patterns[startPos[1][0]+8][startPos[1][1]-1+j] = qrconst.FPFormatInfo
+		}
+
+		// Reserve one-module strip near the bottom-left finder pattern
+		if qr.Patterns[startPos[2][0]-1+i][startPos[2][1]+8].IsUnoccupied() {
+			qr.Patterns[startPos[2][0]-1+i][startPos[2][1]+8] = qrconst.FPSeparator
+		}
+	}
+}
+
+func (qr *QRCode) ReserveVersionInformationArea() {
+	if qr.Version < 7 {
+		return
+	}
+
+	startPos := [3][2]int{
+		{0, qr.Size - 7},
+		{qr.Size - 7, 0},
+	}
+
+	// Reserve 6x3 block to the left of the top-right finder pattern
+	for i := range 6 {
+		for j := range 3 {
+			qr.Patterns[startPos[0][0]+i][startPos[0][1]-4+j] = qrconst.FPVersionInfo
+		}
+	}
+
+	// Reserve 3x6 block above the bottom-left finder pattern
+	for i := range 3 {
+		for j := range 6 {
+			qr.Patterns[startPos[1][0]-4+i][startPos[1][1]+j] = qrconst.FPVersionInfo
+		}
+	}
 }
 
 func (qr *QRCode) RenderPNG(filename string, scale int) error {
