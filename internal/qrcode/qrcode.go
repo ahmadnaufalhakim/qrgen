@@ -43,6 +43,7 @@ func NewQRCode(
 	qrcode.PlaceSeparators()
 	qrcode.PlaceAlignmentPattern()
 	qrcode.PlaceTimingPattern()
+	qrcode.PlaceDarkModule()
 
 	return qrcode
 }
@@ -159,6 +160,12 @@ func (qr *QRCode) PlaceTimingPattern() {
 		}
 		module = !module
 	}
+}
+
+func (qr *QRCode) PlaceDarkModule() {
+	version := qr.Version
+	qr.Modules[4*version+9][8] = true
+	qr.Function[4*version+9][8] = true
 }
 
 func (qr *QRCode) RenderPNG(filename string, scale int) error {
