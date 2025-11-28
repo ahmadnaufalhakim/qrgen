@@ -66,7 +66,7 @@ func divideTwoPolynomials(a, b []uint8) []uint8 {
 		}
 
 		dividend = addTwoPolynomials(dividend, divisor)
-		dividend = discardLeadingZeros(dividend)
+		dividend = dividend[1:]
 
 		divisor = make([]uint8, len(b)-i-1)
 		copy(divisor, b[:len(b)-i-1])
