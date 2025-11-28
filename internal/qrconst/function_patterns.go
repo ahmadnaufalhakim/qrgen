@@ -21,3 +21,7 @@ func (fp FunctionPattern) IsOccupied() bool {
 func (fp FunctionPattern) IsUnoccupied() bool {
 	return fp == FPUnoccupied
 }
+
+func (fp FunctionPattern) IsMessage() bool {
+	return fp == FPMessageBit
+}
