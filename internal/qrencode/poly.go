@@ -57,6 +57,13 @@ func divideTwoPolynomials(a, b []uint8) []uint8 {
 	copy(divisor, b)
 
 	for i := range m {
+		if dividend[0] == 0 {
+			dividend = dividend[1:]
+			divisor = make([]uint8, len(b)-i-1)
+			copy(divisor, b[:len(b)-i-1])
+			continue
+		}
+
 		aLeadCoefExp := tables.LogGF256[dividend[0]]
 		bLeadCoefExp := tables.LogGF256[b[0]]
 
@@ -65,9 +72,7 @@ func divideTwoPolynomials(a, b []uint8) []uint8 {
 			divisor[j] = mulGF256(divisor[j], tables.AntilogGF256[multiplierExp%255])
 		}
 
-		dividend = addTwoPolynomials(dividend, divisor)
-		dividend = dividend[1:]
-
+		dividend = addTwoPolynomials(dividend, divisor)[1:]
 		divisor = make([]uint8, len(b)-i-1)
 		copy(divisor, b[:len(b)-i-1])
 	}
