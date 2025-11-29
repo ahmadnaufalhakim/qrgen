@@ -25,3 +25,19 @@ func (fp FunctionPattern) IsUnoccupied() bool {
 func (fp FunctionPattern) IsMessage() bool {
 	return fp == FPMessageBit
 }
+
+func (fp FunctionPattern) IsFormat() bool {
+	return fp == FPFormatInfo
+}
+
+func (fp FunctionPattern) IsVersion() bool {
+	return fp == FPVersionInfo
+}
+
+func (fp FunctionPattern) IsDarkModule() bool {
+	return fp == FPDarkModule
+}
+
+func (fp FunctionPattern) IsTiming() bool {
+	return fp == FPTiming
+}
