@@ -255,11 +255,7 @@ func (qr *QRCode) PlaceMessageBits() {
 
 		for idx := range 2 * qr.Size {
 			if qr.Patterns[row(idx, upward)][col(idx, j)].IsUnoccupied() {
-				if qr.MessageBits[msgBitIdx] == '1' {
-					qr.Modules[row(idx, upward)][col(idx, j)] = true
-				} else {
-					qr.Modules[row(idx, upward)][col(idx, j)] = false
-				}
+				qr.Modules[row(idx, upward)][col(idx, j)] = qr.MessageBits[msgBitIdx] == '1'
 				qr.Patterns[row(idx, upward)][col(idx, j)] = qrconst.FPMessageBit
 				msgBitIdx++
 			}
