@@ -29,18 +29,25 @@ func kanjiRuneToInt(r rune) (int, error) {
 	sjisValue := uint16(sjisBytes[0])<<8 | uint16(sjisBytes[1])
 
 	var base uint16
-	if sjisValue >= 0x8140 && sjisValue <= 0x9FFC {
+	switch {
+	case sjisValue >= 0x8140 && sjisValue <= 0x9FFC:
 		base = 0x8140
-	}
-	if sjisValue >= 0xE040 && sjisValue <= 0xEBBF {
+	case sjisValue >= 0xE040 && sjisValue <= 0xEBBF:
 		base = 0xC140
+	default:
+		return 0, fmt.Errorf("rune %q not in QR Kanji Shift-JIS ranges", r)
 	}
 
-	sjisValue -= base
-	msb := (sjisValue >> 8) & 0x00FF
-	lsb := sjisValue & 0x00FF
+	sub := sjisValue - base
+	msb := (sub >> 8) & 0x00FF
+	lsb := sub & 0x00FF
 
-	return int(msb*0x00C0 + lsb), nil
+	val := int(msb)*0xC0 + int(lsb)
+	if val < 0 || val > 0x1FFF {
+		return 0, fmt.Errorf("calculated kanji value out of 13-bit range: %d", val)
+	}
+
+	return val, nil
 }
 
 // Encode encodes the input string into QR Code Kanji Mode.
