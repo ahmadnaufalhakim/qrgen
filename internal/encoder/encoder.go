@@ -104,8 +104,8 @@ func determineEncodingMode(s string) qrconst.EncodingMode {
 	if isAlphanumeric {
 		return qrconst.AlphanumericMode
 	}
-	if isKanji {
-		return qrconst.KanjiMode
-	}
+	// if isKanji {
+	// 	return qrconst.KanjiMode
+	// }
 	return qrconst.ByteMode
 }
