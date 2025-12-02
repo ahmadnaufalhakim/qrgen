@@ -2,6 +2,7 @@ package encoder
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/ahmadnaufalhakim/qrgen/internal/qrconst"
 	"golang.org/x/text/encoding/japanese"
@@ -58,14 +59,17 @@ func kanjiRuneToInt(r rune) (int, error) {
 //
 // If a rune cannot be mapped to a valid QR Kanji code, an error is returned.
 func (ke *KanjiEncoder) Encode() ([]string, error) {
-	var bitStrings []string
-	for _, kanjiRune := range ke.s {
-		kanjiInt, err := kanjiRuneToInt(kanjiRune)
+	runes := []rune(ke.s)
+	bitStrings := make([]string, len(runes))
+
+	for i, r := range runes {
+		kanjiInt, err := kanjiRuneToInt(r)
 		if err != nil {
 			return nil, err
 		}
 
-		bitStrings = append(bitStrings, fmt.Sprintf("%013b", kanjiInt))
+		b := strconv.FormatInt(int64(kanjiInt), 2)
+		bitStrings[i] = padBitString(b, 13)
 	}
 
 	return bitStrings, nil

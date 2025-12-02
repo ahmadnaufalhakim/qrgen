@@ -1,7 +1,7 @@
 package encoder
 
 import (
-	"fmt"
+	"strconv"
 
 	"github.com/ahmadnaufalhakim/qrgen/internal/qrconst"
 )
@@ -9,6 +9,8 @@ import (
 type NumericEncoder struct {
 	s string
 }
+
+var numericBitWidths = [...]int{0, 4, 7, 10}
 
 func NewNumericEncoder(s string) *NumericEncoder {
 	return &NumericEncoder{
@@ -40,17 +42,11 @@ func numericSplit(s string) []string {
 // Convert one numeric string group into its QR bit representation.
 // 3 digits -> 10 bits, 2 digits -> 7 bits, 1 digit -> 4 bits
 func encodeNumericBits(group string, groupSize int) string {
-	var binaryFormat string
-	switch groupSize {
-	case 3:
-		binaryFormat = "%010b"
-	case 2:
-		binaryFormat = "%07b"
-	case 1:
-		binaryFormat = "%04b"
-	}
+	n := numericStrToInt(group)
+	bits := numericBitWidths[groupSize]
+	b := strconv.FormatInt(int64(n), 2)
 
-	return fmt.Sprintf(binaryFormat, numericStrToInt(group))
+	return padBitString(b, bits)
 }
 
 // Encode encodes the numeric string into a slice of bit strings,

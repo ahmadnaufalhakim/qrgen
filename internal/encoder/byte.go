@@ -1,7 +1,7 @@
 package encoder
 
 import (
-	"fmt"
+	"strconv"
 
 	"github.com/ahmadnaufalhakim/qrgen/internal/qrconst"
 )
@@ -22,9 +22,10 @@ func NewByteEncoder(s string) *ByteEncoder {
 // as required by the QR specification for Byte mode. Multi-byte UTF-8
 // characters will produce multiple encoded bytes.
 func (be *ByteEncoder) Encode() ([]string, error) {
-	var bitStrings []string
+	bitStrings := make([]string, len(be.s))
 	for i := 0; i < len(be.s); i++ {
-		bitStrings = append(bitStrings, fmt.Sprintf("%08b", be.s[i]))
+		b := strconv.FormatInt(int64(be.s[i]), 2)
+		bitStrings[i] = padBitString(b, 8)
 	}
 
 	return bitStrings, nil

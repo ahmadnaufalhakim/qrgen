@@ -1,7 +1,7 @@
 package encoder
 
 import (
-	"fmt"
+	"strconv"
 
 	"github.com/ahmadnaufalhakim/qrgen/internal/qrconst"
 	"github.com/ahmadnaufalhakim/qrgen/internal/tables"
@@ -10,6 +10,8 @@ import (
 type AlphanumericEncoder struct {
 	s string
 }
+
+var alphanumericBitWidths = [...]int{0, 6, 11}
 
 func NewAlphanumericEncoder(s string) *AlphanumericEncoder {
 	return &AlphanumericEncoder{
@@ -41,15 +43,11 @@ func alphanumericSplit(s string) []string {
 // Convert one alphanumeric string group into its QR bit representation.
 // 2 chars -> 11 bits, 1 char -> 6 bits
 func encodeAlphanumericBits(group string, groupSize int) string {
-	var binaryFormat string
-	switch groupSize {
-	case 2:
-		binaryFormat = "%011b"
-	case 1:
-		binaryFormat = "%06b"
-	}
+	n := alphanumericStrToInt(group)
+	bits := alphanumericBitWidths[groupSize]
+	b := strconv.FormatInt(int64(n), 2)
 
-	return fmt.Sprintf(binaryFormat, alphanumericStrToInt(group))
+	return padBitString(b, bits)
 }
 
 // Encode encodes the input string in QR Code Alphanumeric Mode.
