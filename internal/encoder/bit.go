@@ -1,7 +1,7 @@
 package encoder
 
 func padBitString(s string, width int) string {
-	if len(s) > width {
+	if len(s) >= width {
 		return s
 	}
 
