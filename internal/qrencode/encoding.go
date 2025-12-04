@@ -2,6 +2,7 @@ package qrencode
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/ahmadnaufalhakim/qrgen/internal/qrconst"
@@ -40,7 +41,8 @@ func DetermineVersion(
 }
 
 func ModeIndicator(encMode qrconst.EncodingMode) string {
-	return fmt.Sprintf("%04b", encMode)
+	s := strconv.FormatInt(int64(encMode), 2)
+	return padBitString(s, 4)
 }
 
 func CharCountIndicator(
@@ -48,7 +50,6 @@ func CharCountIndicator(
 	version int,
 	charCount int,
 ) string {
-	var charCountFormat string
 	var idx int
 
 	if version >= 1 && version <= 9 {
@@ -58,9 +59,11 @@ func CharCountIndicator(
 	} else if version >= 27 && version <= 40 {
 		idx = 2
 	}
-	charCountFormat = fmt.Sprintf("%%0%db", tables.CharacterCountIndicatorBits[encMode][idx])
 
-	return fmt.Sprintf(charCountFormat, charCount)
+	bits := tables.CharacterCountIndicatorBits[encMode][idx]
+	b := strconv.FormatInt(int64(charCount), 2)
+
+	return padBitString(b, bits)
 }
 
 func AssembleDataCodewords(
@@ -90,11 +93,11 @@ func AssembleDataCodewords(
 
 	// Add pad bytes if the bit string is still too short
 	if sb.Len() < totalDataCodewords*8 {
-		pads := []int{236, 17}
+		pads := []string{"11101100", "00010001"}
 
 		totalPadBytes := (totalDataCodewords*8 - sb.Len()) / 8
 		for i := range totalPadBytes {
-			sb.WriteString(fmt.Sprintf("%08b", pads[i%2]))
+			sb.WriteString(pads[i%2])
 		}
 	}
 
