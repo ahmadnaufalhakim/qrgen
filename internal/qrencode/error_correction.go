@@ -62,6 +62,8 @@ func AssembleDataBlocks(
 	return dataBlocks, nil
 }
 
+// MessagePolynomial converts a slice of 8-bit data codewords (as strings)
+// into a slice of uint8 representing the message polynomial for error correction.
 func MessagePolynomial(dataBlock []string) ([]uint8, error) {
 	var m []uint8
 	for _, dataCodeword := range dataBlock {
@@ -75,6 +77,9 @@ func MessagePolynomial(dataBlock []string) ([]uint8, error) {
 	return m, nil
 }
 
+// GeneratorPolynomial returns the generator polynomial of degree n for
+// Reed-Solomon error correction, computing it on-demand if not stored
+// in-memory.
 func GeneratorPolynomial(n int) ([]uint8, error) {
 	if n <= 0 {
 		return nil, fmt.Errorf("n must be positive")
@@ -104,6 +109,8 @@ func GeneratorPolynomial(n int) ([]uint8, error) {
 	return prod, nil
 }
 
+// GenerateErrorCorrectionBlocks computes the error correction codewords
+// for each data block of a QR Code using the appropriate generator polynomial.
 func GenerateErrorCorrectionBlocks(
 	version int,
 	ecLevel qrconst.ErrorCorrectionLevel,
