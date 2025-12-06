@@ -27,7 +27,7 @@ func AssembleDataBlocks(
 	group1Blocks := ecBlockInfo.Group1Blocks
 	group2Blocks := ecBlockInfo.Group2Blocks
 	n1 := ecBlockInfo.Group1DataCodewordsPerBlock
-	n2 := ecBlockInfo.Group1DataCodewordsPerBlock
+	n2 := ecBlockInfo.Group2DataCodewordsPerBlock
 
 	dataBlocks := make([][]string, group1Blocks+group2Blocks)
 
