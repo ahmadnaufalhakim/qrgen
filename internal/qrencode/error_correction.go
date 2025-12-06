@@ -7,37 +7,59 @@ import (
 	"github.com/ahmadnaufalhakim/qrgen/internal/tables"
 )
 
-func GroupDataCodewords(
-	ecLevel qrconst.ErrorCorrectionLevel,
+// AssembleDataBlocks splits the data codewords into the exact block structure
+// required by the QR Code specification for the given version and error
+// correction level.
+//
+// A QR version may have:
+// - Group 1 blocks, each containing N1 data codewords; and
+// - Group 2 blocks, each containing N2 data codewords (usually N1 + 1)
+//
+// The function returns a flat slice of data blocks, where each block is
+// a slice of data codewords (8-bit strings).
+func AssembleDataBlocks(
 	version int,
+	ecLevel qrconst.ErrorCorrectionLevel,
 	dataCodewords []string,
-) ([][][]string, error) {
+) ([][]string, error) {
 	ecBlockInfo := tables.ECBlockInfos[ecLevel][version-1]
+	group1Blocks := ecBlockInfo.Group1Blocks
+	group2Blocks := ecBlockInfo.Group2Blocks
+	n1 := ecBlockInfo.Group1DataCodewordsPerBlock
+	n2 := ecBlockInfo.Group1DataCodewordsPerBlock
 
-	dataGroups := make([][][]string, 0, 2)
+	dataBlocks := make([][]string, group1Blocks+group2Blocks)
 
-	// Fill group 1
-	group1 := make([][]string, ecBlockInfo.Group1Blocks)
 	start := 0
-	for block := range ecBlockInfo.Group1Blocks {
-		end := start + ecBlockInfo.Group1DataCodewordsPerBlock
-		group1[block] = append([]string{}, dataCodewords[start:end]...)
+
+	// Fill with group 1 blocks
+	for i := range group1Blocks {
+		end := start + n1
+		if end > len(dataCodewords) {
+			return nil, fmt.Errorf("insufficient data codewords for Group 1 blocks")
+		}
+
+		dataBlocks[i] = append([]string{}, dataCodewords[start:end]...)
 		start = end
 	}
-	dataGroups = append(dataGroups, group1)
 
-	// Fill group 2 (if present)
-	if ecBlockInfo.Group2Blocks > 0 {
-		group2 := make([][]string, ecBlockInfo.Group2Blocks)
-		for block := range ecBlockInfo.Group2Blocks {
-			end := start + ecBlockInfo.Group2DataCodewordsPerBlock
-			group2[block] = append([]string{}, dataCodewords[start:end]...)
-			start = end
+	// Fill with group 2 blocks (if any)
+	for i := range group2Blocks {
+		end := start + n2
+		if end > len(dataCodewords) {
+			return nil, fmt.Errorf("insufficient data codewords for Group 2 blocks")
 		}
-		dataGroups = append(dataGroups, group2)
+
+		dataBlocks[group1Blocks+i] = append([]string{}, dataCodewords[start:end]...)
+		start = end
 	}
 
-	return dataGroups, nil
+	// Safety check (should always match)
+	if start != len(dataCodewords) {
+		return nil, fmt.Errorf("data codeword count mismatch: leftover = %d", len(dataCodewords)-start)
+	}
+
+	return dataBlocks, nil
 }
 
 func MessagePolynomial(dataBlock []string) ([]uint8, error) {
