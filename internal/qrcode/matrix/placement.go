@@ -146,7 +146,7 @@ func PlaceVersionInformation(
 	patterns [][]qrconst.FunctionPattern,
 ) {
 	size := len(modules)
-	version := (size - 17) - 4
+	version := (size - 17) / 4
 	if version < 7 {
 		return
 	}
