@@ -5,33 +5,35 @@ import (
 	"github.com/ahmadnaufalhakim/qrgen/internal/tables"
 )
 
-func DetermineBestMaskPattern(
+func DetermineBestMaskNum(
+	ecLevel qrconst.ErrorCorrectionLevel,
 	modules [][]bool,
 	patterns [][]qrconst.FunctionPattern,
-	ecLevel qrconst.ErrorCorrectionLevel,
-) func(r, c int) bool {
-	bestMaskNumber := 0
+) int {
+	bestMaskNum := 0
 	bestPenalty := int(^uint(0) >> 1)
-	for maskNum, maskPattern := range tables.MaskPatterns {
+	for maskNum := range tables.MaskPatterns {
 		maskedModules := copyModules(modules)
-		ApplyMaskPattern(maskedModules, patterns, maskPattern)
-		PlaceFormatInformation(maskedModules, patterns, ecLevel, maskNum)
+		ApplyMaskPattern(maskNum, maskedModules, patterns)
+		PlaceFormatInformation(ecLevel, maskedModules, patterns, maskNum)
 
 		penalty := TotalPenalty(maskedModules)
 		if penalty < bestPenalty {
-			bestMaskNumber = maskNum
+			bestMaskNum = maskNum
 			bestPenalty = penalty
 		}
 	}
 
-	return tables.MaskPatterns[bestMaskNumber]
+	return bestMaskNum
 }
 
 func ApplyMaskPattern(
+	maskNum int,
 	modules [][]bool,
 	patterns [][]qrconst.FunctionPattern,
-	maskPattern func(r, c int) bool,
 ) {
+	maskPattern := tables.MaskPatterns[maskNum]
+
 	for i := range modules {
 		for j := range modules[i] {
 			if patterns[i][j].IsMessage() && maskPattern(i, j) {

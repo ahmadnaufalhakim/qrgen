@@ -177,9 +177,9 @@ func PlaceVersionInformation(
 }
 
 func PlaceMessageBits(
+	messageBits string,
 	modules [][]bool,
 	patterns [][]qrconst.FunctionPattern,
-	messageBits string,
 ) {
 	size := len(modules)
 
@@ -249,9 +249,9 @@ func ReserveFormatInformationArea(patterns [][]qrconst.FunctionPattern) {
 }
 
 func PlaceFormatInformation(
+	ecLevel qrconst.ErrorCorrectionLevel,
 	modules [][]bool,
 	patterns [][]qrconst.FunctionPattern,
-	ecLevel qrconst.ErrorCorrectionLevel,
 	maskNumber int,
 ) {
 	size := len(modules)
