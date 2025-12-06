@@ -105,8 +105,8 @@ func GeneratorPolynomial(n int) ([]uint8, error) {
 }
 
 func GenerateErrorCorrectionBlocks(
-	ecLevel qrconst.ErrorCorrectionLevel,
 	version int,
+	ecLevel qrconst.ErrorCorrectionLevel,
 	dataBlocks [][]string,
 ) ([][]uint8, error) {
 	ecBlockInfo := tables.ECBlockInfos[ecLevel][version-1]
