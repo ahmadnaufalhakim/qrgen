@@ -11,14 +11,22 @@ import (
 
 func DetermineVersion(
 	encMode qrconst.EncodingMode,
+	minVersion int,
 	ecLevel qrconst.ErrorCorrectionLevel,
 	charCount int,
 ) (int, error) {
 	switch ecLevel {
 	case qrconst.L, qrconst.M, qrconst.Q, qrconst.H:
+		// Ensure minVersion is valid
+		if minVersion < 1 || minVersion > 40 {
+			return 0, fmt.Errorf("minVersion %d is out of range (1-40)", minVersion)
+		}
+		total := 40 - (minVersion - 1)
+
 		charCapacity := tables.CharacterCapacities[encMode][ecLevel]
 
-		for version := range 40 {
+		for i := range total {
+			version := i + (minVersion - 1)
 			lowCharacterCapacity := charCapacity[version]
 			highCharacterCapacity := charCapacity[40-version-1]
 
@@ -29,11 +37,13 @@ func DetermineVersion(
 				if version != 0 {
 					return 40 - version + 1, nil
 				} else {
-					return 0, fmt.Errorf("no version found that can encode %d characters", charCount)
+					return 0, fmt.Errorf("no version >= %d can encode %d characters",
+						minVersion, charCount)
 				}
 			}
 		}
-		return 0, fmt.Errorf("no version found that can encode %d characters", charCount)
+		return 0, fmt.Errorf("no version >= %d can encode %d characters",
+			minVersion, charCount)
 
 	default:
 		return 0, fmt.Errorf("invalid error correction level")
@@ -67,8 +77,8 @@ func CharCountIndicator(
 }
 
 func AssembleDataCodewords(
-	ecLevel qrconst.ErrorCorrectionLevel,
 	version int,
+	ecLevel qrconst.ErrorCorrectionLevel,
 	bitStrings []string,
 ) ([]string, error) {
 	ecBlockInfo := tables.ECBlockInfos[ecLevel][version-1]
