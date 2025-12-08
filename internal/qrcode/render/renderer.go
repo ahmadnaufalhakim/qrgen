@@ -123,6 +123,11 @@ func (r *QRRenderer) RenderPNG(
 		}
 	}
 
+	// Apply Gaussian blur
+	smoothingKernel := GaussianKernel(.8)
+	blurHorizontal(img, smoothingKernel)
+	blurVertical(img, smoothingKernel)
+
 	// Create output file
 	f, err := os.Create(filename)
 	if err != nil {
@@ -164,4 +169,92 @@ func buildLookahead(qr qrcode.QRCode, x, y int) qrconst.Lookahead {
 	}
 
 	return lookahead
+}
+
+func blurHorizontal(img *image.RGBA, kernel []float64) {
+	bounds := img.Bounds()
+	w := bounds.Dx()
+	h := bounds.Dy()
+	r := len(kernel) / 2
+
+	tmp := make([]color.RGBA, w)
+
+	for y := range h {
+		// copy row
+		for x := range w {
+			tmp[x] = img.RGBAAt(x, y)
+		}
+
+		for x := range w {
+			var rSum, gSum, bSum, aSum float64
+
+			for k := -r; k <= r; k++ {
+				xx := x + k
+				if xx < 0 {
+					xx = 0
+				} else if xx >= w {
+					xx = w - 1
+				}
+
+				color := tmp[xx]
+				weight := kernel[k+r]
+
+				rSum += weight * float64(color.R)
+				gSum += weight * float64(color.G)
+				bSum += weight * float64(color.B)
+				aSum += weight * float64(color.A)
+			}
+
+			img.SetRGBA(x, y, color.RGBA{
+				uint8(rSum),
+				uint8(gSum),
+				uint8(bSum),
+				uint8(aSum),
+			})
+		}
+	}
+}
+
+func blurVertical(img *image.RGBA, kernel []float64) {
+	bounds := img.Bounds()
+	w := bounds.Dx()
+	h := bounds.Dy()
+	r := len(kernel) / 2
+
+	tmp := make([]color.RGBA, h)
+
+	for x := range w {
+		// copy row
+		for y := range h {
+			tmp[y] = img.RGBAAt(x, y)
+		}
+
+		for y := range h {
+			var rSum, gSum, bSum, aSum float64
+
+			for k := -r; k <= r; k++ {
+				yy := y + k
+				if yy < 0 {
+					yy = 0
+				} else if yy >= h {
+					yy = h - 1
+				}
+
+				color := tmp[yy]
+				weight := kernel[k+r]
+
+				rSum += weight * float64(color.R)
+				gSum += weight * float64(color.G)
+				bSum += weight * float64(color.B)
+				aSum += weight * float64(color.A)
+			}
+
+			img.SetRGBA(x, y, color.RGBA{
+				uint8(rSum),
+				uint8(gSum),
+				uint8(bSum),
+				uint8(aSum),
+			})
+		}
+	}
 }
