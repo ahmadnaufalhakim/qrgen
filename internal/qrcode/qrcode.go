@@ -1,11 +1,6 @@
 package qrcode
 
 import (
-	"image"
-	"image/color"
-	"image/png"
-	"os"
-
 	"github.com/ahmadnaufalhakim/qrgen/internal/qrconst"
 )
 
@@ -43,45 +38,4 @@ func NewQRCode(
 		Patterns:    patterns,
 		MaskNum:     maskNum,
 	}
-}
-
-func (qr *QRCode) RenderPNG(filename string, scale int) error {
-	if scale < 1 {
-		scale = 1
-	}
-
-	imgSize := qr.Size * scale
-	img := image.NewRGBA(image.Rect(0, 0, imgSize, imgSize))
-
-	black := color.RGBA{0, 0, 0, 255}
-	white := color.RGBA{255, 255, 255, 255}
-
-	for y := range qr.Size {
-		for x := range qr.Size {
-			var c color.RGBA
-			if qr.Modules[y][x] {
-				c = black
-			} else {
-				c = white
-			}
-
-			// Fill the scale*scale block
-			startX, startY := x*scale, y*scale
-			for dy := range scale {
-				for dx := range scale {
-					img.Set(startX+dx, startY+dy, c)
-				}
-			}
-		}
-	}
-
-	// Create output file
-	f, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	// Encode PNG
-	return png.Encode(f, img)
 }
