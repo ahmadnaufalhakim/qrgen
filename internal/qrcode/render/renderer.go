@@ -15,6 +15,9 @@ type QRRenderer struct {
 	moduleShape     qrconst.ModuleShape
 	backgroundColor color.RGBA
 	foregroundColor color.RGBA
+	kernelType      qrconst.KernelType
+	kernelFunc      func(radius int) []float64
+	radius          int
 }
 
 func NewRenderer() *QRRenderer {
@@ -22,6 +25,9 @@ func NewRenderer() *QRRenderer {
 		moduleShape:     qrconst.Square,
 		backgroundColor: color.RGBA{255, 255, 255, 255},
 		foregroundColor: color.RGBA{0, 0, 0, 255},
+		kernelType:      qrconst.KernelGaussian,
+		kernelFunc:      GaussianKernel,
+		radius:          2,
 	}
 }
 
@@ -43,6 +49,24 @@ func (r *QRRenderer) WithForegroundColor(
 	foregroundColor color.RGBA,
 ) *QRRenderer {
 	r.foregroundColor = foregroundColor
+	return r
+}
+
+func (r *QRRenderer) WithKernelType(
+	kernelType qrconst.KernelType,
+) *QRRenderer {
+	r.kernelType = kernelType
+
+	kernelCfg := Kernels[r.kernelType]
+	r.kernelFunc = kernelCfg.KernelFunc
+	r.radius = kernelCfg.DefaultRadius
+	return r
+}
+
+func (r *QRRenderer) WithRadius(
+	radius int,
+) *QRRenderer {
+	r.radius = radius
 	return r
 }
 
@@ -123,10 +147,9 @@ func (r *QRRenderer) RenderPNG(
 		}
 	}
 
-	// Apply Gaussian blur
-	smoothingKernel := GaussianKernel(.8)
-	blurHorizontal(img, smoothingKernel)
-	blurVertical(img, smoothingKernel)
+	// Apply blurring kernel
+	blurHorizontal(img, r.kernelFunc(r.radius))
+	blurVertical(img, r.kernelFunc(r.radius))
 
 	// Create output file
 	f, err := os.Create(filename)
