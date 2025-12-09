@@ -165,7 +165,7 @@ var ModuleMergeFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahe
 		lowerRight = lowerRight && (dx >= 0 && dy <= 0)
 
 		if upperRight || upperLeft || lowerLeft || lowerRight {
-			return euclideanDist(x, y, cx, cy) > r*r+2*r+1
+			return euclideanDist(x, y, cx, cy) > r*r+4
 		}
 
 		return false
