@@ -25,9 +25,9 @@ func NewRenderer() *QRRenderer {
 		moduleShape:     qrconst.Square,
 		backgroundColor: color.RGBA{255, 255, 255, 255},
 		foregroundColor: color.RGBA{0, 0, 0, 255},
-		kernelType:      qrconst.KernelGaussian,
-		kernelFunc:      GaussianKernel,
-		radius:          2,
+		kernelType:      qrconst.KernelLanczos2,
+		kernelFunc:      Lanczos2Kernel,
+		radius:          3,
 	}
 }
 
@@ -80,7 +80,7 @@ func (r *QRRenderer) RenderPNG(
 	var scale int
 	switch {
 	case version >= 30:
-		scale = 13
+		scale = 15
 	case version >= 20:
 		scale = 17
 	case version >= 10:
