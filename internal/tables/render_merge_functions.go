@@ -155,39 +155,86 @@ var ModuleRenderFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookah
 	},
 	qrconst.LeftLeaf: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		r := float64(scale)
+		distFromUR := euclideanDist(x, y, r, 0)
+		distFromDL := euclideanDist(x, y, 0, r)
+
+		edgeR2UR :=
+			has(lookahead, qrconst.LookU) &&
+				lacks(lookahead, qrconst.LookR) &&
+				(x == scale-1 && distFromDL > r*r+2*r+1)
+		edgeUR2U :=
+			has(lookahead, qrconst.LookR) &&
+				lacks(lookahead, qrconst.LookU) &&
+				(y == 0 && distFromDL > r*r+2*r+1)
+		edgeL2DL :=
+			has(lookahead, qrconst.LookD) &&
+				lacks(lookahead, qrconst.LookL) &&
+				(x == 0 && distFromUR > r*r+2*r+1)
+		edgeDL2D :=
+			has(lookahead, qrconst.LookL) &&
+				lacks(lookahead, qrconst.LookD) &&
+				(y == scale-1 && distFromUR > r*r+2*r+1)
+
+		if edgeR2UR || edgeUR2U || edgeL2DL || edgeDL2D {
+			return true
+		}
 
 		// upper-right center's POV
-		condUR := euclideanDist(x, y, r, 0) < r*r+2*r+1
+		condUR := distFromUR < r*r+2*r+1
 
 		// lower-left center's POV
-		condDL := euclideanDist(x, y, 0, r) < r*r+2*r+1
+		condDL := distFromDL < r*r+2*r+1
 
 		// leaf veins patterns
 		condLeafVeins := ((x == y) ||
 			(x == 1*scale/5 && y < 1*scale/5) || (y == 1*scale/5 && x < 1*scale/5) ||
 			(x == 2*scale/5 && y < 2*scale/5) || (y == 2*scale/5 && x < 2*scale/5) ||
 			(x == 3*scale/5 && y < 3*scale/5) || (y == 3*scale/5 && x < 3*scale/5) ||
-			(x == 4*scale/5 && y < 4*scale/5) || (y == 4*scale/5 && x < 4*scale/5)) &&
-			(x != 0 && y != 0) && (x != scale-1 && y != scale-1)
+			(x == 4*scale/5 && y < 4*scale/5) || (y == 4*scale/5 && x < 4*scale/5))
+		// (x != 0 && y != 0) && (x != scale-1 && y != scale-1)
 
 		return condUR && condDL && !condLeafVeins
 	},
 	qrconst.RightLeaf: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		r := float64(scale)
 
+		distFromUL := euclideanDist(x, y, 0, 0)
+		distFromDR := euclideanDist(x, y, r, r)
+
+		edgeU2UL :=
+			has(lookahead, qrconst.LookL) &&
+				lacks(lookahead, qrconst.LookU) &&
+				(y == 0 && distFromDR > r*r+2*r+1)
+		edgeUL2L :=
+			has(lookahead, qrconst.LookU) &&
+				lacks(lookahead, qrconst.LookL) &&
+				(x == 0 && distFromDR > r*r+2*r+1)
+		edgeD2DR :=
+			has(lookahead, qrconst.LookR) &&
+				lacks(lookahead, qrconst.LookD) &&
+				(y == scale-1 && distFromUL > r*r+2*r+1)
+		edgeDR2R :=
+			has(lookahead, qrconst.LookD) &&
+				lacks(lookahead, qrconst.LookR) &&
+				(x == scale-1 && distFromUL > r*r+2*r+1)
+
+		if edgeU2UL || edgeUL2L || edgeD2DR || edgeDR2R {
+			return true
+		}
+
 		// upper-left center's POV
-		condUL := euclideanDist(x, y, 0, 0) < r*r+2*r+1
+		condUL := distFromUL < r*r+2*r+1
 
 		// lower-right center's POV
-		condDR := euclideanDist(x, y, r, r) < r*r+2*r+1
+		condDR := distFromDR < r*r+2*r+1
 
 		// leaf veins patterns
 		condLeafVeins := ((x+y == scale-1) ||
 			(scale-x == 1*scale/5 && y < 1*scale/5) || (scale-y == 1*scale/5 && x > 1*scale/5) ||
 			(scale-x == 2*scale/5 && y < 2*scale/5) || (scale-y == 2*scale/5 && x > 2*scale/5) ||
 			(scale-x == 3*scale/5 && y < 3*scale/5) || (scale-y == 3*scale/5 && x > 3*scale/5) ||
-			(scale-x == 4*scale/5 && y < 4*scale/5) || (scale-y == 4*scale/5 && x > 4*scale/5)) &&
-			(x != 0 && y != scale-1) && (x != scale-1 && y != 0)
+			(scale-x == 4*scale/5 && y < 4*scale/5) || (scale-y == 4*scale/5 && x > 4*scale/5))
+		// (x != 0 && y != scale-1) && (x != scale-1 && y != 0)
 
 		return condUL && condDR && !condLeafVeins
 	},
@@ -268,7 +315,7 @@ var ModuleMergeFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahe
 
 		if cornerUR || cornerUL || cornerDL || cornerDR {
 			d2 := euclideanDist(x, y, cx, cy)
-			return d2 >= r*r-r+.25 && d2 <= r*r+r+.25
+			return d2 >= r*r-1.25*r && d2 <= r*r+1.25*r
 		}
 
 		return false
@@ -355,9 +402,39 @@ var ModuleMergeFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahe
 		return false
 	},
 	qrconst.LeftLeaf: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+		cx := mid(scale)
+		cy := mid(scale)
+
+		r := cx
+		dx := float64(x) - cx
+		dy := cy - float64(y)
+
+		cornerUR := has(lookahead, qrconst.LookR, qrconst.LookUR, qrconst.LookU) && (dx >= 0 && dy >= 0)
+		cornerDL := has(lookahead, qrconst.LookL, qrconst.LookDL, qrconst.LookD) && (dx <= 0 && dy <= 0)
+
+		if cornerUR || cornerDL {
+			d2 := euclideanDist(x, y, cx, cy)
+			return d2 >= r*r-r+25 && d2 <= r*r+r+25
+		}
+
 		return false
 	},
 	qrconst.RightLeaf: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+		cx := mid(scale)
+		cy := mid(scale)
+
+		r := cx
+		dx := float64(x) - cx
+		dy := cy - float64(y)
+
+		cornerUL := has(lookahead, qrconst.LookU, qrconst.LookUL, qrconst.LookL) && (dx <= 0 && dy >= 0)
+		cornerDR := has(lookahead, qrconst.LookD, qrconst.LookDR, qrconst.LookR) && (dx >= 0 && dy <= 0)
+
+		if cornerUL || cornerDR {
+			d2 := euclideanDist(x, y, cx, cy)
+			return d2 >= r*r-r+25 && d2 <= r*r+r+25
+		}
+
 		return false
 	},
 	qrconst.Diamond: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
