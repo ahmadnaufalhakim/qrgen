@@ -8,6 +8,8 @@ const (
 	HorizontalBlob
 	VerticalBlob
 	Blob
+	LeftLeaf
+	RightLeaf
 	Diamond
 	DropletDown
 	DropletUp
