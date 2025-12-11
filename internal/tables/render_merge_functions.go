@@ -161,29 +161,29 @@ var ModuleRenderFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookah
 		edgeR2UR :=
 			has(lookahead, qrconst.LookU) &&
 				lacks(lookahead, qrconst.LookR) &&
-				(x == scale-1 && distFromDL > r*r+2*r+1)
+				(x == scale-1 && distFromDL > r*r+4*r+4)
 		edgeUR2U :=
 			has(lookahead, qrconst.LookR) &&
 				lacks(lookahead, qrconst.LookU) &&
-				(y == 0 && distFromDL > r*r+2*r+1)
+				(y == 0 && distFromDL > r*r+4*r+4)
 		edgeL2DL :=
 			has(lookahead, qrconst.LookD) &&
 				lacks(lookahead, qrconst.LookL) &&
-				(x == 0 && distFromUR > r*r+2*r+1)
+				(x == 0 && distFromUR > r*r+4*r+4)
 		edgeDL2D :=
 			has(lookahead, qrconst.LookL) &&
 				lacks(lookahead, qrconst.LookD) &&
-				(y == scale-1 && distFromUR > r*r+2*r+1)
+				(y == scale-1 && distFromUR > r*r+4*r+4)
 
 		if edgeR2UR || edgeUR2U || edgeL2DL || edgeDL2D {
 			return true
 		}
 
 		// upper-right center's POV
-		condUR := distFromUR < r*r+2*r+1
+		condUR := distFromUR < r*r+4*r+4
 
 		// lower-left center's POV
-		condDL := distFromDL < r*r+2*r+1
+		condDL := distFromDL < r*r+4*r+4
 
 		// leaf veins patterns
 		condLeafVeins := ((x == y) ||
@@ -204,29 +204,29 @@ var ModuleRenderFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookah
 		edgeU2UL :=
 			has(lookahead, qrconst.LookL) &&
 				lacks(lookahead, qrconst.LookU) &&
-				(y == 0 && distFromDR > r*r+2*r+1)
+				(y == 0 && distFromDR > r*r+4*r+4)
 		edgeUL2L :=
 			has(lookahead, qrconst.LookU) &&
 				lacks(lookahead, qrconst.LookL) &&
-				(x == 0 && distFromDR > r*r+2*r+1)
+				(x == 0 && distFromDR > r*r+4*r+4)
 		edgeD2DR :=
 			has(lookahead, qrconst.LookR) &&
 				lacks(lookahead, qrconst.LookD) &&
-				(y == scale-1 && distFromUL > r*r+2*r+1)
+				(y == scale-1 && distFromUL > r*r+4*r+4)
 		edgeDR2R :=
 			has(lookahead, qrconst.LookD) &&
 				lacks(lookahead, qrconst.LookR) &&
-				(x == scale-1 && distFromUL > r*r+2*r+1)
+				(x == scale-1 && distFromUL > r*r+4*r+4)
 
 		if edgeU2UL || edgeUL2L || edgeD2DR || edgeDR2R {
 			return true
 		}
 
 		// upper-left center's POV
-		condUL := distFromUL < r*r+2*r+1
+		condUL := distFromUL < r*r+4*r+4
 
 		// lower-right center's POV
-		condDR := distFromDR < r*r+2*r+1
+		condDR := distFromDR < r*r+4*r+4
 
 		// leaf veins patterns
 		condLeafVeins := ((x+y == scale-1) ||
@@ -481,7 +481,7 @@ var ModuleMergeFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahe
 
 		if cornerUR || cornerDL {
 			d2 := euclideanDist(x, y, cx, cy)
-			return d2 >= r*r-r+25 && d2 <= r*r+r+25
+			return d2 >= r*r-r+15 && d2 <= r*r+r+15
 		}
 
 		return false
@@ -499,7 +499,7 @@ var ModuleMergeFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahe
 
 		if cornerUL || cornerDR {
 			d2 := euclideanDist(x, y, cx, cy)
-			return d2 >= r*r-r+25 && d2 <= r*r+r+25
+			return d2 >= r*r-r+15 && d2 <= r*r+r+15
 		}
 
 		return false
