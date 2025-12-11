@@ -294,6 +294,73 @@ var ModuleRenderFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookah
 
 		return cond1 && cond2
 	},
+	qrconst.SmileyFace: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+		cx := mid(scale)
+		cy := mid(scale)
+		cxLeftEye := cx - 4
+		cyLeftEye := cy - 3
+		cxRightEye := cx + 4
+		cyRightEye := cy - 3
+
+		r := cx
+		dx := float64(x) - cx
+		dy := cy - float64(y)
+
+		edgeR2UR :=
+			has(lookahead, qrconst.LookU) &&
+				lacks(lookahead, qrconst.LookR, qrconst.LookUR) &&
+				(x == scale-1 && dy >= 0)
+		edgeUR2U :=
+			has(lookahead, qrconst.LookR) &&
+				lacks(lookahead, qrconst.LookUR, qrconst.LookU) &&
+				(y == 0 && dx >= 0)
+		edgeU2UL :=
+			has(lookahead, qrconst.LookL) &&
+				lacks(lookahead, qrconst.LookU, qrconst.LookUL) &&
+				(y == 0 && dx <= 0)
+		edgeUL2L :=
+			has(lookahead, qrconst.LookU) &&
+				lacks(lookahead, qrconst.LookUL, qrconst.LookL) &&
+				(x == 0 && dy >= 0)
+		edgeL2DL :=
+			has(lookahead, qrconst.LookD) &&
+				lacks(lookahead, qrconst.LookL, qrconst.LookDL) &&
+				(x == 0 && dy <= 0)
+		edgeDL2D :=
+			has(lookahead, qrconst.LookL) &&
+				lacks(lookahead, qrconst.LookDL, qrconst.LookD) &&
+				(y == scale-1 && dx <= 0)
+		edgeD2DR :=
+			has(lookahead, qrconst.LookR) &&
+				lacks(lookahead, qrconst.LookD, qrconst.LookDR) &&
+				(y == scale-1 && dx >= 0)
+		edgeDR2R :=
+			has(lookahead, qrconst.LookD) &&
+				lacks(lookahead, qrconst.LookDR, qrconst.LookR) &&
+				(x == scale-1 && dy <= 0)
+
+		if edgeR2UR || edgeUR2U || edgeU2UL || edgeUL2L ||
+			edgeL2DL || edgeDL2D || edgeD2DR || edgeDR2R {
+			return true
+		}
+
+		distFromOrigin := euclideanDist(x, y, cx, cy)
+		distFromLeftEye := euclideanDist(x, y, cxLeftEye, cyLeftEye)
+		distFromRightEye := euclideanDist(x, y, cxRightEye, cyRightEye)
+		mouthArcY := cy + 5 - .08*float64(dx*dx)
+
+		face := distFromOrigin < r*r+4
+		leftEye := distFromLeftEye < .025*r*r
+		rightEye := distFromRightEye < .025*r*r
+		nose := (x != int(cx) || (math.Abs(dy) > 1))
+		mouth := float64(y) >= mouthArcY-.75 && float64(y) <= mouthArcY+.75 && math.Abs(dx) < 6
+
+		return face &&
+			!leftEye &&
+			!rightEye &&
+			nose &&
+			!mouth
+	},
 }
 
 var ModuleMergeFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahead qrconst.Lookahead) bool{
@@ -447,6 +514,26 @@ var ModuleMergeFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahe
 		return false
 	},
 	qrconst.Octagon: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+		return false
+	},
+	qrconst.SmileyFace: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+		cx := mid(scale)
+		cy := mid(scale)
+
+		r := cx
+		dx := float64(x) - cx
+		dy := cy - float64(y)
+
+		cornerUR := has(lookahead, qrconst.LookR, qrconst.LookUR, qrconst.LookU) && (dx >= 0 && dy >= 0)
+		cornerUL := has(lookahead, qrconst.LookU, qrconst.LookUL, qrconst.LookL) && (dx <= 0 && dy >= 0)
+		cornerDL := has(lookahead, qrconst.LookL, qrconst.LookDL, qrconst.LookD) && (dx <= 0 && dy <= 0)
+		cornerDR := has(lookahead, qrconst.LookD, qrconst.LookDR, qrconst.LookR) && (dx >= 0 && dy <= 0)
+
+		if cornerUR || cornerUL || cornerDL || cornerDR {
+			d2 := euclideanDist(x, y, cx, cy)
+			return d2 >= r*r-1.25*r && d2 <= r*r+1.25*r
+		}
+
 		return false
 	},
 }
