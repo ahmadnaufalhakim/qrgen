@@ -1,14 +1,18 @@
 package qrconst
 
-type Lookahead uint8
+type Lookahead uint16
 
 const (
-	LookR  Lookahead = 1 << 7
-	LookUR Lookahead = 1 << 6
-	LookU  Lookahead = 1 << 5
-	LookUL Lookahead = 1 << 4
-	LookL  Lookahead = 1 << 3
-	LookDL Lookahead = 1 << 2
-	LookD  Lookahead = 1 << 1
-	LookDR Lookahead = 1 << 0
+	LookR  Lookahead = 1 << 0
+	LookUR Lookahead = 1 << 1
+	LookU  Lookahead = 1 << 2
+	LookUL Lookahead = 1 << 3
+	LookL  Lookahead = 1 << 4
+	LookDL Lookahead = 1 << 5
+	LookD  Lookahead = 1 << 6
+	LookDR Lookahead = 1 << 7
+
+	LookFinder    Lookahead = 1 << 8
+	LookSeparator Lookahead = 1 << 9
+	LookAlignment Lookahead = 1 << 10
 )
