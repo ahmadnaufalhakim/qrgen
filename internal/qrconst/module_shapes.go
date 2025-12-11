@@ -14,4 +14,5 @@ const (
 	DropletDown
 	DropletUp
 	Octagon
+	SmileyFace
 )
