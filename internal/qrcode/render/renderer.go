@@ -191,6 +191,16 @@ func buildLookahead(qr qrcode.QRCode, x, y int) qrconst.Lookahead {
 		lookahead |= qrconst.LookDR
 	}
 
+	if qr.Patterns[y][x].IsFinder() {
+		lookahead |= qrconst.LookFinder
+	}
+	if qr.Patterns[y][x].IsAlignment() {
+		lookahead |= qrconst.LookAlignment
+	}
+	if qr.Patterns[y][x].IsSeparator() {
+		lookahead |= qrconst.LookSeparator
+	}
+
 	return lookahead
 }
 
