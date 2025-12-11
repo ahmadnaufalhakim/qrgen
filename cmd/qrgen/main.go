@@ -11,8 +11,10 @@ import (
 )
 
 var (
-	BLACK = color.RGBA{0, 0, 0, 255}
-	WHITE = color.RGBA{255, 255, 255, 255}
+	BLACK  = color.RGBA{0, 0, 0, 255}
+	WHITE  = color.RGBA{255, 255, 255, 255}
+	PINK   = color.RGBA{224, 134, 200, 255}
+	YELLOW = color.RGBA{251, 208, 67, 255}
 )
 
 func main() {
@@ -32,12 +34,12 @@ func main() {
 		return
 	}
 
-	bg := color.RGBA{224, 134, 200, 255}
-	fg := color.RGBA{251, 208, 67, 255}
+	bg := WHITE
+	fg := BLACK
 
 	start := time.Now()
 	qrRenderer := render.NewRenderer().
-		WithModuleShape(qrconst.SmileyFace).
+		WithModuleShape(qrconst.Pointillism).
 		WithBackgroundColor(bg).
 		WithForegroundColor(fg).
 		WithKernelType(qrconst.KernelLanczos2)
