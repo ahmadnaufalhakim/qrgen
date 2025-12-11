@@ -32,12 +32,12 @@ func main() {
 		return
 	}
 
-	bg := WHITE
-	fg := BLACK
+	bg := color.RGBA{224, 134, 200, 255}
+	fg := color.RGBA{251, 208, 67, 255}
 
 	start := time.Now()
 	qrRenderer := render.NewRenderer().
-		WithModuleShape(qrconst.Circle).
+		WithModuleShape(qrconst.SmileyFace).
 		WithBackgroundColor(bg).
 		WithForegroundColor(fg).
 		WithKernelType(qrconst.KernelLanczos2)
