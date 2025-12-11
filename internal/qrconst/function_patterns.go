@@ -22,6 +22,18 @@ func (fp FunctionPattern) IsUnoccupied() bool {
 	return fp == FPUnoccupied
 }
 
+func (fp FunctionPattern) IsFinder() bool {
+	return fp == FPFinder
+}
+
+func (fp FunctionPattern) IsSeparator() bool {
+	return fp == FPSeparator
+}
+
+func (fp FunctionPattern) IsAlignment() bool {
+	return fp == FPAlignment
+}
+
 func (fp FunctionPattern) IsMessage() bool {
 	return fp == FPMessageBit
 }
