@@ -12,7 +12,15 @@ const (
 	LookD  Lookahead = 1 << 6
 	LookDR Lookahead = 1 << 7
 
-	LookFinder    Lookahead = 1 << 8
-	LookSeparator Lookahead = 1 << 9
-	LookAlignment Lookahead = 1 << 10
+	LookFinder     Lookahead = 1 << 8
+	LookSeparator  Lookahead = 1 << 9
+	LookAlignment  Lookahead = 1 << 10
+	LookTiming     Lookahead = 1 << 11
+	LookDarkModule Lookahead = 1 << 12
+
+	LookStructural = LookFinder |
+		LookSeparator |
+		LookAlignment |
+		LookTiming |
+		LookDarkModule
 )
