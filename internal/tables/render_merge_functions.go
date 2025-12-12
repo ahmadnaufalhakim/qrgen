@@ -267,6 +267,51 @@ var ModuleRenderFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookah
 
 		return f > 0
 	},
+	qrconst.Star4: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+		cx := mid(scale)
+		cy := mid(scale)
+
+		dx := float64(x) - cx
+		dy := cy - float64(y)
+
+		d2 := euclideanDist(x, y, cx, cy)
+
+		angle := math.Atan2(dy, dx)
+		rBase := float64(scale) * 0.33
+		starRadius := rBase * (1 + 0.25*math.Cos(4*angle))
+
+		return math.Sqrt(d2) <= starRadius*1.25
+	},
+	qrconst.Star5: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+		cx := mid(scale)
+		cy := mid(scale)
+
+		dx := float64(x) - cx
+		dy := cy - float64(y)
+
+		d2 := euclideanDist(x, y, cx, cy)
+
+		angle := math.Atan2(dy, dx)
+		rBase := float64(scale) * 0.33
+		starRadius := rBase * (1 + 0.25*math.Cos(5*angle))
+
+		return math.Sqrt(d2) <= starRadius*1.25
+	},
+	qrconst.Star6: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+		cx := mid(scale)
+		cy := mid(scale)
+
+		dx := float64(x) - cx
+		dy := cy - float64(y)
+
+		d2 := euclideanDist(x, y, cx, cy)
+
+		angle := math.Atan2(dy, dx)
+		rBase := float64(scale) * 0.33
+		starRadius := rBase * (1 + 0.25*math.Cos(6*angle))
+
+		return math.Sqrt(d2) <= starRadius*1.25
+	},
 	qrconst.Octagon: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		cx := mid(scale)
 		cy := mid(scale)
@@ -525,6 +570,15 @@ var ModuleMergeFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahe
 		return false
 	},
 	qrconst.WaterDroplet: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+		return false
+	},
+	qrconst.Star4: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+		return false
+	},
+	qrconst.Star5: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+		return false
+	},
+	qrconst.Star6: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		return false
 	},
 	qrconst.Octagon: func(x, y, scale int, lookahead qrconst.Lookahead) bool {

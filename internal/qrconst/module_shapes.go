@@ -12,6 +12,9 @@ const (
 	RightLeaf
 	Diamond
 	WaterDroplet
+	Star4
+	Star5
+	Star6
 	Octagon
 	SmileyFace
 	Pointillism
