@@ -365,11 +365,8 @@ var ModuleRenderFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookah
 		cx := mid(scale)
 		cy := mid(scale)
 
-		var r float64
-
-		if has(lookahead, qrconst.LookFinder) ||
-			has(lookahead, qrconst.LookAlignment) {
-			r = cx
+		r := cx
+		if has(lookahead, qrconst.LookStructural) {
 			return euclideanDist(x, y, cx, cy) <= r*r+9
 		}
 
@@ -382,17 +379,17 @@ var ModuleRenderFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookah
 			mask <<= 1
 		}
 
-		minR := 0.32 * float64(scale)
-		maxR := 0.50 * float64(scale)
+		minR := 0.24 * float64(scale)
+		maxR := 0.60 * float64(scale)
 
-		k := .4
+		k := .18
 		t := 1 - math.Exp(-k*float64(neighbors))
 		if t > 1 {
 			t = 1
 		}
 		r = minR + (maxR-minR)*t
 
-		return euclideanDist(x, y, cx, cy) <= r*r+16
+		return euclideanDist(x, y, cx, cy) <= r*r+9
 	},
 }
 
@@ -573,9 +570,7 @@ var ModuleMergeFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahe
 		cx := mid(scale)
 		cy := mid(scale)
 
-		if has(lookahead, qrconst.LookFinder) ||
-			has(lookahead, qrconst.LookSeparator) ||
-			has(lookahead, qrconst.LookAlignment) {
+		if has(lookahead, qrconst.LookStructural) {
 			return false
 		}
 
@@ -588,10 +583,10 @@ var ModuleMergeFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahe
 			mask <<= 1
 		}
 
-		minR := .04 * float64(scale)
-		maxR := .06 * float64(scale)
+		minR := .06 * float64(scale)
+		maxR := .18 * float64(scale)
 
-		k := .4
+		k := .06
 		t := 1 - math.Exp(-k*float64(neighbors))
 		r := minR + (maxR-minR)*t
 
