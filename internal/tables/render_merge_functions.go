@@ -246,39 +246,26 @@ var ModuleRenderFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookah
 
 		return manhattanDist(x, y, cx, cy) <= r
 	},
-	qrconst.DropletDown: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
-		cx := mid(scale)
-		cy := mid(scale)
+	qrconst.WaterDroplet: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+		// Parametric function
+		// x(t) = at^3 + bt^2 + ct + d
+		// y(t) = pt^3 + qt^2
+		a := .7 * (.66 * float64(scale))
+		b := -.4 * (.66 * float64(scale))
+		c := -1 * (.66 * float64(scale))
+		d := .72 * (.66 * float64(scale))
+		p := 1.125 * (.66 * float64(scale))
+		q := 2.8 * (.66 * float64(scale))
 
-		r := cx
-		dx := float64(x) - cx
-		dy := float64(y) - cy
+		// Convert to cartesian function
+		A := (b*p - a*q) / p
+		B := (float64(x) - 6.25) - a*(float64(scale-y)-1)/p - d
+		M := A*B*p - A*c*q + c*c*p
+		N := B * (A*q - c*q)
 
-		// top half: circle cap
-		if dy < 0 {
-			return dx*dx+dy*dy <= r*r*0.80
-		}
+		f := A*math.Pow(A*A*(float64(scale-y)-1)-N, 2) + c*M*(A*A*(float64(scale-y)-1)-N) - B*M*M
 
-		// bottom half: more curved
-		dy *= 1.3
-		return dx*dx+dy*dy <= r*r
-	},
-	qrconst.DropletUp: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
-		cx := mid(scale)
-		cy := mid(scale)
-
-		r := cx
-		dx := float64(x) - cx
-		dy := float64(y) - cy
-
-		// bottom half: circle cap
-		if dy > 0 {
-			return dx*dx+dy*dy <= r*r*0.80
-		}
-
-		// top: curved
-		dy *= 1.3
-		return dx*dx+dy*dy <= r*r
+		return f > 0
 	},
 	qrconst.Octagon: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		cx := mid(scale)
@@ -537,10 +524,7 @@ var ModuleMergeFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahe
 	qrconst.Diamond: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		return false
 	},
-	qrconst.DropletDown: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
-		return false
-	},
-	qrconst.DropletUp: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+	qrconst.WaterDroplet: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		return false
 	},
 	qrconst.Octagon: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
@@ -591,7 +575,6 @@ var ModuleMergeFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahe
 		r := minR + (maxR-minR)*t
 
 		return euclideanDist(x, y, cx, cy) <= r*r
-
 	},
 }
 

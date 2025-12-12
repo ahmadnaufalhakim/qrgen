@@ -11,8 +11,7 @@ const (
 	LeftLeaf
 	RightLeaf
 	Diamond
-	DropletDown
-	DropletUp
+	WaterDroplet
 	Octagon
 	SmileyFace
 	Pointillism
