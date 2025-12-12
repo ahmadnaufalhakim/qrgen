@@ -88,7 +88,7 @@ func (r *QRRenderer) RenderPNG(
 	default:
 		scale = 21
 	}
-	margin := scale
+	margin := 4 * scale
 
 	// Prepare the image matrix
 	imgSize := qr.Size*scale + 2*margin
@@ -194,11 +194,17 @@ func buildLookahead(qr qrcode.QRCode, x, y int) qrconst.Lookahead {
 	if qr.Patterns[y][x].IsFinder() {
 		lookahead |= qrconst.LookFinder
 	}
+	if qr.Patterns[y][x].IsSeparator() {
+		lookahead |= qrconst.LookSeparator
+	}
 	if qr.Patterns[y][x].IsAlignment() {
 		lookahead |= qrconst.LookAlignment
 	}
-	if qr.Patterns[y][x].IsSeparator() {
-		lookahead |= qrconst.LookSeparator
+	if qr.Patterns[y][x].IsTiming() {
+		lookahead |= qrconst.LookTiming
+	}
+	if qr.Patterns[y][x].IsDarkModule() {
+		lookahead |= qrconst.LookDarkModule
 	}
 
 	return lookahead
