@@ -312,6 +312,16 @@ var ModuleRenderFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookah
 
 		return math.Sqrt(d2) <= starRadius*1.25
 	},
+	qrconst.Xs: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+		forwardSlash :=
+			(float64(x+y) > 2*float64(scale)/3) && (float64(x+y) < 4*float64(scale)/3)
+		backwardSlash :=
+			(math.Abs(float64(x-y)) < float64(scale)/3)
+
+		// TODO: add cage enclosing each cluster of `true` modules
+
+		return forwardSlash || backwardSlash
+	},
 	qrconst.Octagon: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		cx := mid(scale)
 		cy := mid(scale)
@@ -579,6 +589,9 @@ var ModuleMergeFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahe
 		return false
 	},
 	qrconst.Star6: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+		return false
+	},
+	qrconst.Xs: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		return false
 	},
 	qrconst.Octagon: func(x, y, scale int, lookahead qrconst.Lookahead) bool {

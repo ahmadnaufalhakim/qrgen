@@ -15,6 +15,7 @@ const (
 	Star4
 	Star5
 	Star6
+	Xs
 	Octagon
 	SmileyFace
 	Pointillism
