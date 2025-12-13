@@ -314,13 +314,37 @@ var ModuleRenderFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookah
 	},
 	qrconst.Xs: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		forwardSlash :=
-			(float64(x+y) > 2*float64(scale)/3) && (float64(x+y) < 4*float64(scale)/3)
+			(float64(x+y) >= 1.5*float64(scale)/2-1) && (float64(x+y) <= 2.5*float64(scale)/2-1)
+
 		backwardSlash :=
-			(math.Abs(float64(x-y)) < float64(scale)/3)
+			(float64(x-y) >= -.5*float64(scale)/2 && float64(x-y) <= .5*float64(scale)/2)
 
-		// TODO: add cage enclosing each cluster of `true` modules
+		right :=
+			lacks(lookahead, qrconst.LookR) &&
+				(has(lookahead, qrconst.LookDR) || has(lookahead, qrconst.LookUR)) &&
+				(x == scale-1 && y == scale/2)
+		up :=
+			lacks(lookahead, qrconst.LookU) &&
+				(has(lookahead, qrconst.LookUR) || has(lookahead, qrconst.LookUL)) &&
+				(x == scale/2 && y == 0)
+		left :=
+			lacks(lookahead, qrconst.LookL) &&
+				(has(lookahead, qrconst.LookUL) || has(lookahead, qrconst.LookDL)) &&
+				(x == 0 && y == scale/2)
+		down :=
+			lacks(lookahead, qrconst.LookD) &&
+				(has(lookahead, qrconst.LookDL) || has(lookahead, qrconst.LookDR)) &&
+				(x == scale/2 && y == scale-1)
 
-		return forwardSlash || backwardSlash
+		if has(lookahead, qrconst.LookStructural) {
+			forwardSlash = forwardSlash ||
+				(x+y == 1*scale/2) || (x+y == 3*scale/2-1)
+			backwardSlash = backwardSlash ||
+				(x-y == -1*scale/2) || (x-y == 1*scale/2)
+		}
+
+		return forwardSlash || backwardSlash ||
+			right || up || left || down
 	},
 	qrconst.Octagon: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		cx := mid(scale)
@@ -592,7 +616,24 @@ var ModuleMergeFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahe
 		return false
 	},
 	qrconst.Xs: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
-		return false
+		upperRight :=
+			has(lookahead, qrconst.LookR, qrconst.LookU) &&
+				((float64(x-y) >= 1.5*float64(scale)/2 && float64(x-y) <= 2*float64(scale)/2) ||
+					x-y == 1*scale/2+1)
+		upperLeft :=
+			has(lookahead, qrconst.LookU, qrconst.LookL) &&
+				((float64(x+y) >= 0*float64(scale)/2 && float64(x+y) <= 0.5*float64(scale)/2-1) ||
+					x+y == 1*scale/2-1)
+		lowerLeft :=
+			has(lookahead, qrconst.LookL, qrconst.LookD) &&
+				((float64(x-y) >= -2*float64(scale)/2 && float64(x-y) <= -1.5*float64(scale)/2) ||
+					x-y == -1*scale/2-1)
+		lowerRight :=
+			has(lookahead, qrconst.LookD, qrconst.LookR) &&
+				((float64(x+y) >= 3.5*float64(scale)/2-1 && float64(x+y) <= 4*float64(scale)/2) ||
+					x+y == 3*scale/2)
+
+		return upperRight || upperLeft || lowerLeft || lowerRight
 	},
 	qrconst.Octagon: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		return false
