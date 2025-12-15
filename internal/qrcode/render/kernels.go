@@ -2,44 +2,22 @@ package render
 
 import (
 	"math"
-
-	"github.com/ahmadnaufalhakim/qrgen/internal/qrconst"
 )
 
-var Kernels = map[qrconst.KernelType]struct {
+var Kernels = map[string]struct {
 	KernelFunc    func(radius int) []float64
 	DefaultRadius int
 }{
-	qrconst.KernelLanczos2: {
-		Lanczos2Kernel, 3,
-	},
-	qrconst.KernelCubicSmooth: {
-		CubicSmoothKernel, 1,
-	},
-	qrconst.KernelGaussian: {
-		GaussianKernel, 2,
-	},
-	qrconst.KernelLanczos3: {
-		Lanczos3Kernel, 4,
-	},
-	qrconst.KernelHann: {
-		HannKernel, 2,
-	},
-	qrconst.KernelTriangle: {
-		TriangleKernel, 1,
-	},
-	qrconst.KernelCosine: {
-		CosineKernel, 2,
-	},
-	qrconst.KernelEpanechnikov: {
-		EpanechnikovKernel, 2,
-	},
-	qrconst.KernelBSpline: {
-		BSplineKernel, 2,
-	},
-	qrconst.KernelBox: {
-		BoxKernel, 1,
-	},
+	"Lanczos2":     {Lanczos2Kernel, 3},
+	"CubicSmooth":  {CubicSmoothKernel, 1},
+	"Gaussian":     {GaussianKernel, 2},
+	"Lanczos3":     {Lanczos3Kernel, 4},
+	"Hann":         {HannKernel, 2},
+	"Triangle":     {TriangleKernel, 1},
+	"Cosine":       {CosineKernel, 2},
+	"Epanechnikov": {EpanechnikovKernel, 2},
+	"BSpline":      {BSplineKernel, 2},
+	"Box":          {BoxKernel, 1},
 }
 
 // radius: 1(default)-2
