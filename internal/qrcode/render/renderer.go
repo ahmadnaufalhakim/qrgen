@@ -4,6 +4,7 @@ import (
 	"image"
 	"image/color"
 	"image/png"
+	"io"
 	"os"
 
 	"github.com/ahmadnaufalhakim/qrgen/internal/qrcode"
@@ -15,7 +16,7 @@ type QRRenderer struct {
 	moduleShape     qrconst.ModuleShape
 	backgroundColor color.RGBA
 	foregroundColor color.RGBA
-	kernelType      qrconst.KernelType
+	kernelType      string
 	kernelFunc      func(radius int) []float64
 	radius          int
 }
@@ -25,7 +26,7 @@ func NewRenderer() *QRRenderer {
 		moduleShape:     qrconst.Square,
 		backgroundColor: color.RGBA{255, 255, 255, 255},
 		foregroundColor: color.RGBA{0, 0, 0, 255},
-		kernelType:      qrconst.KernelLanczos2,
+		kernelType:      "Lanczos2",
 		kernelFunc:      Lanczos2Kernel,
 		radius:          3,
 	}
@@ -53,7 +54,7 @@ func (r *QRRenderer) WithForegroundColor(
 }
 
 func (r *QRRenderer) WithKernelType(
-	kernelType qrconst.KernelType,
+	kernelType string,
 ) *QRRenderer {
 	r.kernelType = kernelType
 
@@ -70,10 +71,36 @@ func (r *QRRenderer) WithRadius(
 	return r
 }
 
+func (r *QRRenderer) RenderImage(qr qrcode.QRCode) image.Image {
+	return r.renderImage(qr)
+}
+
 func (r *QRRenderer) RenderPNG(
 	qr qrcode.QRCode,
 	filename string,
 ) error {
+	img := r.renderImage(qr)
+
+	// Create output file
+	f, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	// Encode PNG
+	return png.Encode(f, img)
+}
+
+func (r *QRRenderer) RenderPNGToWriter(
+	qr qrcode.QRCode,
+	w io.Writer,
+) error {
+	img := r.renderImage(qr)
+	return png.Encode(w, img)
+}
+
+func (r *QRRenderer) renderImage(qr qrcode.QRCode) image.Image {
 	version := qr.Version
 
 	// Set scale based on the QR Code version
@@ -121,9 +148,8 @@ func (r *QRRenderer) RenderPNG(
 		for x := range qr.Size {
 			lookahead := buildLookahead(qr, x, y)
 			startX, startY := x*scale+margin, y*scale+margin
-			module := qr.Modules[y][x]
 
-			if module {
+			if qr.Modules[y][x] {
 				for dy := range scale {
 					for dx := range scale {
 						if tables.ModuleRenderFunctions[r.moduleShape](dx, dy, scale, lookahead) {
@@ -151,15 +177,7 @@ func (r *QRRenderer) RenderPNG(
 	blurHorizontal(img, r.kernelFunc(r.radius))
 	blurVertical(img, r.kernelFunc(r.radius))
 
-	// Create output file
-	f, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	// Encode PNG
-	return png.Encode(f, img)
+	return img
 }
 
 func buildLookahead(qr qrcode.QRCode, x, y int) qrconst.Lookahead {
