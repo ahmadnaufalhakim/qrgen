@@ -44,12 +44,28 @@ func (b *QRBuilder) WithErrorCorrectionLevel(
 	return b
 }
 
-func (b *QRBuilder) WithMaskNum(maskNum int) *QRBuilder {
-	b.maskNum = &maskNum
+func (b *QRBuilder) WithMaskNum(maskNum *int) *QRBuilder {
+	b.maskNum = maskNum
 	return b
 }
 
 func (b *QRBuilder) Build() (*QRCode, error) {
+	// 0. If text is empty, return a default (template) QR Code object
+	if b.text == "" {
+		qrCode := NewQRCode(
+			b.minVersion,
+			b.ecLevel,
+			"",
+		)
+
+		err := b.placeTemplateModules(qrCode)
+		if err != nil {
+			return nil, err
+		}
+
+		return qrCode, nil
+	}
+
 	// 1. Determine encoding mode
 	encoder, err := encoder.NewEncoder(b.text, b.encMode)
 	if err != nil {
@@ -137,7 +153,7 @@ func (b *QRBuilder) Build() (*QRCode, error) {
 	)
 
 	// 10. Place modules in the QR Code matrix
-	err = b.placeModules(qrCode)
+	err = b.placeAllModules(qrCode)
 	if err != nil {
 		return nil, err
 	}
@@ -145,19 +161,8 @@ func (b *QRBuilder) Build() (*QRCode, error) {
 	return qrCode, nil
 }
 
-func (b *QRBuilder) placeModules(qr *QRCode) error {
-	// Determine the mask pattern
-	if b.maskNum != nil {
-		qr.MaskNum = *b.maskNum
-	} else {
-		qr.MaskNum = matrix.DetermineBestMaskNum(
-			qr.ECLevel,
-			qr.Modules,
-			qr.Patterns,
-		)
-	}
-
-	// Place modules and function patterns
+func (b *QRBuilder) placeTemplateModules(qr *QRCode) error {
+	// Place template modules and function patterns
 	matrix.PlaceFinderPatterns(
 		qr.Modules,
 		qr.Patterns,
@@ -185,6 +190,23 @@ func (b *QRBuilder) placeModules(qr *QRCode) error {
 	matrix.ReserveFormatInformationArea(
 		qr.Patterns,
 	)
+
+	return nil
+}
+
+func (b *QRBuilder) placeFormatAndDataModules(qr *QRCode) error {
+	// Determine the mask pattern
+	if b.maskNum != nil {
+		qr.MaskNum = *b.maskNum
+	} else {
+		qr.MaskNum = matrix.DetermineBestMaskNum(
+			qr.ECLevel,
+			qr.Modules,
+			qr.Patterns,
+		)
+	}
+
+	// Place format information and message bits
 	matrix.PlaceFormatInformation(
 		qr.ECLevel,
 		qr.Modules,
@@ -201,6 +223,20 @@ func (b *QRBuilder) placeModules(qr *QRCode) error {
 		qr.Modules,
 		qr.Patterns,
 	)
+
+	return nil
+}
+
+func (b *QRBuilder) placeAllModules(qr *QRCode) error {
+	err := b.placeTemplateModules(qr)
+	if err != nil {
+		return err
+	}
+
+	err = b.placeFormatAndDataModules(qr)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
