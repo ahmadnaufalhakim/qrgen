@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"image/color"
+	"os"
 	"time"
 
 	"github.com/ahmadnaufalhakim/qrgen/internal/qrcode"
@@ -45,11 +46,18 @@ func main() {
 		WithBackgroundColor(bg).
 		WithForegroundColor(fg)
 
-	err = qrRenderer.RenderPNG(*qrCode, "main.png")
+	f, err := os.Create("main.png")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+
+	err = qrRenderer.RenderToWriter(*qrCode, f, qrconst.RenderPNG)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
 	elapsed := time.Since(start)
 	fmt.Printf("Rendering took %s\n", elapsed)
 }

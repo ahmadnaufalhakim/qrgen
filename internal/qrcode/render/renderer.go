@@ -1,11 +1,12 @@
 package render
 
 import (
+	"fmt"
 	"image"
 	"image/color"
+	"image/jpeg"
 	"image/png"
 	"io"
-	"os"
 
 	"github.com/ahmadnaufalhakim/qrgen/internal/qrcode"
 	"github.com/ahmadnaufalhakim/qrgen/internal/qrconst"
@@ -75,29 +76,21 @@ func (r *QRRenderer) RenderImage(qr qrcode.QRCode) image.Image {
 	return r.renderImage(qr)
 }
 
-func (r *QRRenderer) RenderPNG(
-	qr qrcode.QRCode,
-	filename string,
-) error {
-	img := r.renderImage(qr)
-
-	// Create output file
-	f, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	// Encode PNG
-	return png.Encode(f, img)
-}
-
-func (r *QRRenderer) RenderPNGToWriter(
+func (r *QRRenderer) RenderToWriter(
 	qr qrcode.QRCode,
 	w io.Writer,
+	format qrconst.RenderFormat,
 ) error {
 	img := r.renderImage(qr)
-	return png.Encode(w, img)
+
+	switch format {
+	case qrconst.RenderPNG:
+		return png.Encode(w, img)
+	case qrconst.RenderJPEG:
+		return jpeg.Encode(w, img, nil)
+	default:
+		return fmt.Errorf("unsupported render format")
+	}
 }
 
 func (r *QRRenderer) renderImage(qr qrcode.QRCode) image.Image {
