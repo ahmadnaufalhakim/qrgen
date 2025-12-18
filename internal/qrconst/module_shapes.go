@@ -15,6 +15,7 @@ const (
 	Star4
 	Star5
 	Star6
+	Star8
 	Xs
 	Octagon
 	SmileyFace

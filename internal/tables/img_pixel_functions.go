@@ -312,6 +312,21 @@ var PixelRenderFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahe
 
 		return math.Sqrt(d2) <= starRadius*1.25
 	},
+	qrconst.Star8: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+		cx := mid(scale)
+		cy := mid(scale)
+
+		dx := float64(x) - cx
+		dy := cy - float64(y)
+
+		d2 := euclideanDist(x, y, cx, cy)
+
+		angle := math.Atan2(dy, dx)
+		rBase := float64(scale) * 0.33
+		starRadius := rBase * (1 + 0.25*math.Cos(8*angle))
+
+		return math.Sqrt(d2) <= starRadius*1.25
+	},
 	qrconst.Xs: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		forwardSlash :=
 			(float64(x+y) >= 1.5*float64(scale)/2-1) && (float64(x+y) <= 2.5*float64(scale)/2-1)
@@ -613,6 +628,9 @@ var PixelMergeFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahea
 		return false
 	},
 	qrconst.Star6: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+		return false
+	},
+	qrconst.Star8: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		return false
 	},
 	qrconst.Xs: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
