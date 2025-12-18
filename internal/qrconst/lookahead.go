@@ -24,3 +24,23 @@ const (
 		LookTiming |
 		LookDarkModule
 )
+
+func (l Lookahead) Has(las ...Lookahead) bool {
+	for _, la := range las {
+		if l&la == 0 {
+			return false
+		}
+	}
+
+	return true
+}
+
+func (l Lookahead) Lacks(las ...Lookahead) bool {
+	for _, la := range las {
+		if l&la != 0 {
+			return false
+		}
+	}
+
+	return true
+}
