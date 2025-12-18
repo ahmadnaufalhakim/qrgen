@@ -312,7 +312,18 @@ var PathRenderFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahe
 	},
 	qrconst.Star4: func(lookahead qrconst.Lookahead) []string {
 		return []string{`<path
-	d="M 1 0.5 Q .575 .425 0.5 0 Q .425 .425 0 .5 Q .425 .575 .5 1 Q .575 .575 1 .5"
+	d="M 1 0.5 L .67 .33 L 0.5 0 L .33 .33 L 0 .5 L .33 .67 L .5 1 L .67 .67 L 1 .5"
+	fill="rgba(0,0,0,1.)"
+	stroke="rgba(0,0,0,1.)"
+	stroke-linecap="round"
+	stroke-linejoin="round"
+	stroke-width="0.125"
+/>
+`}
+	},
+	qrconst.Star5: func(lookahead qrconst.Lookahead) []string {
+		return []string{`<path
+	d="M 1 0.5 L 0.65450849 0.38774301 L 0.6545085 0.02447174 L 0.44098301 0.31836437 L 0.0954915 0.20610737 L 0.309017 0.5 L 0.0954915 0.79389263 L 0.44098301 0.68163563 L 0.6545085 0.97552826 L 0.65450849 0.61225699 L 1 .5"
 	fill="rgba(0,0,0,1.)"
 	stroke="rgba(0,0,0,1.)"
 	stroke-linecap="round"
@@ -523,6 +534,9 @@ var PathMergeFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahea
 		return nil
 	},
 	qrconst.Star4: func(lookahead qrconst.Lookahead) []string {
+		return nil
+	},
+	qrconst.Star5: func(lookahead qrconst.Lookahead) []string {
 		return nil
 	},
 	qrconst.Pointillism: func(lookahead qrconst.Lookahead) []string {
