@@ -37,22 +37,34 @@ func main() {
 		return
 	}
 
-	bg := BLACK
-	fg := SILVER
+	bg := WHITE
+	fg := BLACK
 
 	start := time.Now()
 	qrRenderer := render.NewRenderer().
-		WithModuleShape(qrconst.Pointillism).
+		WithModuleShape(qrconst.Star6).
 		WithBackgroundColor(bg).
 		WithForegroundColor(fg)
 
+	// PNG Rendering
 	f, err := os.Create("main.png")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-
 	err = qrRenderer.RenderToWriter(*qrCode, f, qrconst.RenderPNG)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	// SVG Rendering
+	f, err = os.Create("main.svg")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	err = qrRenderer.RenderSVG(*qrCode, f)
 	if err != nil {
 		fmt.Println(err)
 		return
