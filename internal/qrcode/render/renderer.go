@@ -7,6 +7,7 @@ import (
 	"image/jpeg"
 	"image/png"
 	"io"
+	"strings"
 
 	"github.com/ahmadnaufalhakim/qrgen/internal/qrcode"
 	"github.com/ahmadnaufalhakim/qrgen/internal/qrconst"
@@ -93,6 +94,107 @@ func (r *QRRenderer) RenderToWriter(
 	}
 }
 
+func (r *QRRenderer) RenderSVG(qr qrcode.QRCode, w io.Writer) error {
+	size := len(qr.Modules)
+	quietZone := 4
+	totalSize := size + quietZone*2
+
+	fmt.Fprintf(
+		w, `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 %d %d" shape-rendering="crispEdges">
+`,
+		totalSize, totalSize,
+	)
+	fmt.Fprintf(
+		w, `<rect width="100%%" height="100%%" fill="rgba(%d, %d, %d, %f)"/>
+`,
+		r.backgroundColor.R, r.backgroundColor.G, r.backgroundColor.B, float64(r.backgroundColor.A)/255.0,
+	)
+
+	pathRenderFunc := tables.PathRenderFunctions[r.moduleShape]
+	pathMergeFunc := tables.PathMergeFunctions[r.moduleShape]
+
+	for y, row := range qr.Modules {
+		for x, module := range row {
+			lookahead := buildLookahead(qr, x, y)
+
+			if module {
+				svgPaths := pathRenderFunc(lookahead)
+
+				for _, path := range svgPaths {
+					if strings.Contains(path, "stroke=\"rgba(0,0,0,1.)\"") {
+						path = strings.ReplaceAll(
+							path,
+							"stroke=\"rgba(0,0,0,1.)\"",
+							fmt.Sprintf(
+								"stroke=\"rgba(%d,%d,%d,%f)\"",
+								r.foregroundColor.R, r.foregroundColor.G, r.foregroundColor.B, float64(r.backgroundColor.A)/255.0,
+							),
+						)
+					}
+					if strings.Contains(path, "fill=\"rgba(0,0,0,1.)\"") {
+						path = strings.ReplaceAll(
+							path,
+							"fill=\"rgba(0,0,0,1.)\"",
+							fmt.Sprintf(
+								"fill=\"rgba(%d,%d,%d,%f)\"",
+								r.foregroundColor.R, r.foregroundColor.G, r.foregroundColor.B, float64(r.backgroundColor.A)/255.0,
+							),
+						)
+					}
+
+					fmt.Fprint(
+						w,
+						strings.Split(path, "/>")[0]+
+							fmt.Sprintf(
+								"\ttransform=\"translate(%d %d)\"\n/>\n",
+								quietZone+x, quietZone+y,
+							),
+					)
+				}
+			} else {
+				svgPaths := pathMergeFunc(lookahead)
+
+				for _, path := range svgPaths {
+					if strings.Contains(path, "stroke=\"rgba(0,0,0,1.)\"") {
+						path = strings.ReplaceAll(
+							path,
+							"stroke=\"rgba(0,0,0,1.)\"",
+							fmt.Sprintf(
+								"stroke=\"rgba(%d,%d,%d,%f)\"",
+								r.foregroundColor.R, r.foregroundColor.G, r.foregroundColor.B, float64(r.backgroundColor.A)/255.0,
+							),
+						)
+					}
+					if strings.Contains(path, "fill=\"rgba(0,0,0,1.)\"") {
+						path = strings.ReplaceAll(
+							path,
+							"fill=\"rgba(0,0,0,1.)\"",
+							fmt.Sprintf(
+								"fill=\"rgba(%d,%d,%d,%f)\"",
+								r.foregroundColor.R, r.foregroundColor.G, r.foregroundColor.B, float64(r.backgroundColor.A)/255.0,
+							),
+						)
+					}
+
+					fmt.Fprint(
+						w,
+						strings.Split(path, "/>")[0]+
+							fmt.Sprintf(
+								"\ttransform=\"translate(%d %d)\"\n/>\n",
+								quietZone+x, quietZone+y,
+							),
+					)
+				}
+			}
+		}
+	}
+
+	fmt.Fprintf(w, `
+</svg>`)
+
+	return nil
+}
+
 func (r *QRRenderer) renderImage(qr qrcode.QRCode) image.Image {
 	version := qr.Version
 
@@ -145,7 +247,7 @@ func (r *QRRenderer) renderImage(qr qrcode.QRCode) image.Image {
 			if qr.Modules[y][x] {
 				for dy := range scale {
 					for dx := range scale {
-						if tables.ModuleRenderFunctions[r.moduleShape](dx, dy, scale, lookahead) {
+						if tables.PixelRenderFunctions[r.moduleShape](dx, dy, scale, lookahead) {
 							img.Set(startX+dx, startY+dy, fg)
 						} else {
 							img.Set(startX+dx, startY+dy, bg)
@@ -155,7 +257,7 @@ func (r *QRRenderer) renderImage(qr qrcode.QRCode) image.Image {
 			} else {
 				for dy := range scale {
 					for dx := range scale {
-						if tables.ModuleMergeFunctions[r.moduleShape](dx, dy, scale, lookahead) {
+						if tables.PixelMergeFunctions[r.moduleShape](dx, dy, scale, lookahead) {
 							img.Set(startX+dx, startY+dy, fg)
 						} else {
 							img.Set(startX+dx, startY+dy, bg)
