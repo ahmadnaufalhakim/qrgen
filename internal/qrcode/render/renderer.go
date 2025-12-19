@@ -100,9 +100,15 @@ func (r *QRRenderer) RenderSVG(qr qrcode.QRCode, w io.Writer) error {
 	totalSize := size + quietZone*2
 
 	fmt.Fprintf(
-		w, `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 %d %d" shape-rendering="crispEdges">
+		w, `<svg
+	xmlns="http://www.w3.org/2000/svg"
+	viewBox="0 0 %d %d"
+	shape-rendering="geometricPrecision"
+	width="%d" height="%d"
+>
 `,
 		totalSize, totalSize,
+		totalSize*51, totalSize*51,
 	)
 	fmt.Fprintf(
 		w, `<rect width="100%%" height="100%%" fill="rgba(%d, %d, %d, %f)"/>
