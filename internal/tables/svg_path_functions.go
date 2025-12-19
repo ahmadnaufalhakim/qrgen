@@ -16,6 +16,13 @@ var PathRenderFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahe
 `}
 	},
 	qrconst.Circle: func(lookahead qrconst.Lookahead) []string {
+		return []string{`<path
+	d="M .5 .5 m -.5 0 a .5 .5 0 1 0 1 0 a .5 .5 0 1 0 -1 0"
+	fill="rgba(0,0,0,1.)"
+/>
+`}
+	},
+	qrconst.TiedCircle: func(lookahead qrconst.Lookahead) []string {
 		var paths []string
 
 		paths = append(paths, `<path
@@ -23,6 +30,11 @@ var PathRenderFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahe
 	fill="rgba(0,0,0,1.)"
 />
 `)
+
+		UR := lookahead.Lacks(qrconst.LookR, qrconst.LookU)
+		UL := lookahead.Lacks(qrconst.LookU, qrconst.LookL)
+		DL := lookahead.Lacks(qrconst.LookL, qrconst.LookD)
+		DR := lookahead.Lacks(qrconst.LookD, qrconst.LookR)
 
 		R2UR := lookahead.Has(qrconst.LookU) &&
 			lookahead.Lacks(qrconst.LookR, qrconst.LookUR)
@@ -41,59 +53,128 @@ var PathRenderFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahe
 		DR2R := lookahead.Has(qrconst.LookD) &&
 			lookahead.Lacks(qrconst.LookDR, qrconst.LookR)
 
+		if UR {
+			paths = append(paths, `<path
+	d="M 1 .5 A .5 .5 0 0 0 .5 0"
+	fill="none"
+	stroke="rgba(0,0,0,1.)"
+	stroke-linecap="square"
+	stroke-linejoin="round"
+	stroke-width=".05"
+/>
+`)
+		}
+		if UL {
+			paths = append(paths, `<path
+	d="M .5 0 A .5 .5 0 0 0 0 .5"
+	fill="none"
+	stroke="rgba(0,0,0,1.)"
+	stroke-linecap="square"
+	stroke-linejoin="round"
+	stroke-width=".05"
+/>
+`)
+		}
+		if DL {
+			paths = append(paths, `<path
+	d="M 0 .5 A .5 .5 0 0 0 .5 1"
+	fill="none"
+	stroke="rgba(0,0,0,1.)"
+	stroke-linecap="square"
+	stroke-linejoin="round"
+	stroke-width=".05"
+/>
+`)
+		}
+		if DR {
+			paths = append(paths, `<path
+	d="M .5 1 A .5 .5 0 0 0 1 .5"
+	fill="none"
+	stroke="rgba(0,0,0,1.)"
+	stroke-linecap="square"
+	stroke-linejoin="round"
+	stroke-width=".05"
+/>
+`)
+		}
+
 		if R2UR {
 			paths = append(paths, `<path
 	d="M 1 .5 v -.5 Z"
-	stroke-width=".025"
+	stroke="rgba(0,0,0,1.)"
+	stroke-linecap="square"
+	stroke-linejoin="round"
+	stroke-width=".05"
 />
 `)
 		}
 		if UR2U {
 			paths = append(paths, `<path
 	d="M 1 0 h -.5 Z"
-	stroke-width=".025"
+	stroke="rgba(0,0,0,1.)"
+	stroke-linecap="square"
+	stroke-linejoin="round"
+	stroke-width=".05"
 />
 `)
 		}
 		if U2UL {
 			paths = append(paths, `<path
 	d="M .5 0 h -.5 Z"
-	stroke-width=".025"
+	stroke="rgba(0,0,0,1.)"
+	stroke-linecap="square"
+	stroke-linejoin="round"
+	stroke-width=".05"
 />
 `)
 		}
 		if UL2L {
 			paths = append(paths, `<path
 	d="M 0 0 v .5 Z"
-	stroke-width=".025"
+	stroke="rgba(0,0,0,1.)"
+	stroke-linecap="square"
+	stroke-linejoin="round"
+	stroke-width=".05"
 />
 `)
 		}
 		if L2DL {
 			paths = append(paths, `<path
 	d="M 0 .5 v .5 Z"
-	stroke-width=".025"
+	stroke="rgba(0,0,0,1.)"
+	stroke-linecap="square"
+	stroke-linejoin="round"
+	stroke-width=".05"
 />
 `)
 		}
 		if DL2D {
 			paths = append(paths, `<path
 	d="M 0 1 h .5 Z"
-	stroke-width=".025"
+	stroke="rgba(0,0,0,1.)"
+	stroke-linecap="square"
+	stroke-linejoin="round"
+	stroke-width=".05"
 />
 `)
 		}
 		if D2DR {
 			paths = append(paths, `<path
 	d="M .5 1 h .5 Z"
-	stroke-width=".025"
+	stroke="rgba(0,0,0,1.)"
+	stroke-linecap="square"
+	stroke-linejoin="round"
+	stroke-width=".05"
 />
 `)
 		}
 		if DR2R {
 			paths = append(paths, `<path
 	d="M 1 1 v -.5 Z"
-	stroke-width=".025"
+	stroke="rgba(0,0,0,1.)"
+	stroke-linecap="square"
+	stroke-linejoin="round"
+	stroke-width=".05"
 />
 `)
 		}
@@ -398,6 +479,9 @@ var PathMergeFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahea
 		return nil
 	},
 	qrconst.Circle: func(lookahead qrconst.Lookahead) []string {
+		return nil
+	},
+	qrconst.TiedCircle: func(lookahead qrconst.Lookahead) []string {
 		var paths []string
 
 		cornerUR := lookahead.Has(qrconst.LookR, qrconst.LookUR, qrconst.LookU)
@@ -409,7 +493,10 @@ var PathMergeFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahea
 			paths = append(paths, `<path
 	d="M 1 .5 A .5 .5 0 0 0 .5 0"
 	fill="none"
-	stroke-width=".025"
+	stroke="rgba(0,0,0,1.)"
+	stroke-linecap="square"
+	stroke-linejoin="round"
+	stroke-width=".05"
 />
 `)
 		}
@@ -417,7 +504,10 @@ var PathMergeFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahea
 			paths = append(paths, `<path
 	d="M .5 0 A .5 .5 0 0 0 0 .5"
 	fill="none"
-	stroke-width=".025"
+	stroke="rgba(0,0,0,1.)"
+	stroke-linecap="square"
+	stroke-linejoin="round"
+	stroke-width=".05"
 />
 `)
 		}
@@ -425,7 +515,10 @@ var PathMergeFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahea
 			paths = append(paths, `<path
 	d="M 0 .5 A .5 .5 0 0 0 .5 1"
 	fill="none"
-	stroke-width=".025"
+	stroke="rgba(0,0,0,1.)"
+	stroke-linecap="square"
+	stroke-linejoin="round"
+	stroke-width=".05"
 />
 `)
 		}
@@ -433,7 +526,10 @@ var PathMergeFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahea
 			paths = append(paths, `<path
 	d="M .5 1 A .5 .5 0 0 0 1 .5"
 	fill="none"
-	stroke-width=".025"
+	stroke="rgba(0,0,0,1.)"
+	stroke-linecap="square"
+	stroke-linejoin="round"
+	stroke-width=".05"
 />
 `)
 		}

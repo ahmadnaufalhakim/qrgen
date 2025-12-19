@@ -15,6 +15,14 @@ var PixelRenderFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahe
 		cy := mid(scale)
 
 		r := cx
+
+		return euclideanDist(x, y, cx, cy) <= r*r+4
+	},
+	qrconst.TiedCircle: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+		cx := mid(scale)
+		cy := mid(scale)
+
+		r := cx
 		dx := float64(x) - cx
 		dy := cy - float64(y)
 
@@ -479,6 +487,9 @@ var PixelMergeFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahea
 		return false
 	},
 	qrconst.Circle: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+		return false
+	},
+	qrconst.TiedCircle: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		cx := mid(scale)
 		cy := mid(scale)
 
