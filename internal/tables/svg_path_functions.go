@@ -11,6 +11,7 @@ var PathRenderFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahe
 	qrconst.Square: func(lookahead qrconst.Lookahead) []string {
 		return []string{`<path
 	d="M 0 0 h 1 v 1 h -1 Z"
+	fill="rgba(0,0,0,1.)"
 />
 `}
 	},
@@ -18,7 +19,8 @@ var PathRenderFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahe
 		var paths []string
 
 		paths = append(paths, `<path
-	d="M 0.5 0.5 m -0.5 0 a 0.5 0.5 0 1 0 1 0 a 0.5 0.5 0 1 0 -1 0"
+	d="M .5 .5 m -.5 0 a .5 .5 0 1 0 1 0 a .5 .5 0 1 0 -1 0"
+	fill="rgba(0,0,0,1.)"
 />
 `)
 
@@ -102,64 +104,37 @@ var PathRenderFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahe
 		var paths []string
 
 		paths = append(paths, `<path
-	d="M 0.5 0.5 m -0.5 0 a 0.5 0.5 0 1 0 1 0 a 0.5 0.5 0 1 0 -1 0"
+	d="M .5 .5 m -.5 0 a .5 .5 0 1 0 1 0 a .5 .5 0 1 0 -1 0"
+	fill="rgba(0,0,0,1.)"
 />
 `)
 
 		R := lookahead.Has(qrconst.LookR)
-		L := lookahead.Has(qrconst.LookL)
 
 		UR := lookahead.Has(qrconst.LookUR) &&
 			lookahead.Lacks(qrconst.LookR, qrconst.LookU)
-		UL := lookahead.Has(qrconst.LookUL) &&
-			lookahead.Lacks(qrconst.LookU, qrconst.LookL)
-		DL := lookahead.Has(qrconst.LookDL) &&
-			lookahead.Lacks(qrconst.LookL, qrconst.LookD)
 		DR := lookahead.Has(qrconst.LookDR) &&
 			lookahead.Lacks(qrconst.LookD, qrconst.LookR)
 
 		if R {
 			paths = append(paths, `<path
-	d="M 1 0.5 V 0 H 0.5 A 0.5 0.5 0 0 1 1 0.5"
-/>
-`)
-			paths = append(paths, `<path
-	d="M 0.5 1 H 1 V 0.5 A 0.5 0.5 0 0 1 0.5 1"
-/>
-`)
-		}
-		if L {
-			paths = append(paths, `<path
-	d="M 0.5 0 H 0 V 0.5 A 0.5 0.5 0 0 1 0.5 0"
-/>
-`)
-			paths = append(paths, `<path
-	d="M 0 0.5 V 1 H 0.5 A 0.5 0.5 0 0 1 0 0.5"
+	d="M .5 0 V 1 H 1.5 V 0 Z"
+	fill="rgba(0,0,0,1.)"
 />
 `)
 		}
 
 		if UR {
 			paths = append(paths, `<path
-	d="M 1 0.5 V 0 H 0.5 A 0.5 0.5 0 0 1 1 0.5"
-/>
-`)
-		}
-		if UL {
-			paths = append(paths, `<path
-	d="M 0.5 0 H 0 V 0.5 A 0.5 0.5 0 0 1 0.5 0"
-/>
-`)
-		}
-		if DL {
-			paths = append(paths, `<path
-	d="M 0 0.5 V 1 H 0.5 A 0.5 0.5 0 0 1 0 0.5"
+	d="M .5 .5 H 1 A .5 .5 0 0 1 1.5 0 V -.5 H 1 A .5 .5 0 0 1 .5 0 Z"
+	fill="rgba(0,0,0,1.)"
 />
 `)
 		}
 		if DR {
 			paths = append(paths, `<path
-	d="M 0.5 1 H 1 V 0.5 A 0.5 0.5 0 0 1 0.5 1"
+	d="M .5 .5 V 1 A .5 .5 0 0 1 1 1.5 H 1.5 V 1 A .5 .5 0 0 1 1 .5 Z"
+	fill="rgba(0,0,0,1.)"
 />
 `)
 		}
@@ -170,64 +145,37 @@ var PathRenderFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahe
 		var paths []string
 
 		paths = append(paths, `<path
-	d="M 0.5 0.5 m -0.5 0 a 0.5 0.5 0 1 0 1 0 a 0.5 0.5 0 1 0 -1 0"
+	d="M .5 .5 m -.5 0 a .5 .5 0 1 0 1 0 a .5 .5 0 1 0 -1 0"
+	fill="rgba(0,0,0,1.)"
 />
 `)
 
-		U := lookahead.Has(qrconst.LookU)
 		D := lookahead.Has(qrconst.LookD)
 
-		UR := lookahead.Has(qrconst.LookUR) &&
-			lookahead.Lacks(qrconst.LookR, qrconst.LookU)
-		UL := lookahead.Has(qrconst.LookUL) &&
-			lookahead.Lacks(qrconst.LookU, qrconst.LookL)
 		DL := lookahead.Has(qrconst.LookDL) &&
 			lookahead.Lacks(qrconst.LookL, qrconst.LookD)
 		DR := lookahead.Has(qrconst.LookDR) &&
 			lookahead.Lacks(qrconst.LookD, qrconst.LookR)
 
-		if U {
-			paths = append(paths, `<path
-	d="M 1 0.5 V 0 H 0.5 A 0.5 0.5 0 0 1 1 0.5"
-/>
-`)
-			paths = append(paths, `<path
-	d="M 0.5 0 H 0 V 0.5 A 0.5 0.5 0 0 1 0.5 0"
-/>
-`)
-		}
 		if D {
 			paths = append(paths, `<path
-	d="M 0 0.5 V 1 H 0.5 A 0.5 0.5 0 0 1 0 0.5"
-/>
-`)
-			paths = append(paths, `<path
-	d="M 0.5 1 H 1 V 0.5 A 0.5 0.5 0 0 1 0.5 1"
+	d="M 1 .5 H 0 V 1.5 H 1 Z"
+	fill="rgba(0,0,0,1.)"
 />
 `)
 		}
 
-		if UR {
-			paths = append(paths, `<path
-	d="M 1 0.5 V 0 H 0.5 A 0.5 0.5 0 0 1 1 0.5"
-/>
-`)
-		}
-		if UL {
-			paths = append(paths, `<path
-	d="M 0.5 0 H 0 V 0.5 A 0.5 0.5 0 0 1 0.5 0"
-/>
-`)
-		}
 		if DL {
 			paths = append(paths, `<path
-	d="M 0 0.5 V 1 H 0.5 A 0.5 0.5 0 0 1 0 0.5"
+	d="M .5 .5 H 0 A .5 .5 0 0 1 -.5 1 V 1.5 H 0 A .5 .5 0 0 1 .5 1 Z"
+	fill="rgba(0,0,0,1.)"
 />
 `)
 		}
 		if DR {
 			paths = append(paths, `<path
-	d="M 0.5 1 H 1 V 0.5 A 0.5 0.5 0 0 1 0.5 1"
+	d="M .5 .5 V 1 A .5 .5 0 0 1 1 1.5 H 1.5 V 1 A .5 .5 0 0 1 1 .5 Z"
+	fill="rgba(0,0,0,1.)"
 />
 `)
 		}
@@ -238,66 +186,43 @@ var PathRenderFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahe
 		var paths []string
 
 		paths = append(paths, `<path
-	d="M 0.5 0.5 m -0.5 0 a 0.5 0.5 0 1 0 1 0 a 0.5 0.5 0 1 0 -1 0"
+	d="M .5 .5 m -.5 0 a .5 .5 0 1 0 1 0 a .5 .5 0 1 0 -1 0"
+	fill="rgba(0,0,0,1.)"
 />
 `)
 
 		R := lookahead.Has(qrconst.LookR)
-		U := lookahead.Has(qrconst.LookU)
-		L := lookahead.Has(qrconst.LookL)
-		D := lookahead.Has(qrconst.LookD)
-
 		UR := lookahead.Has(qrconst.LookUR)
-		UL := lookahead.Has(qrconst.LookUL)
-		DL := lookahead.Has(qrconst.LookDL)
+
+		D := lookahead.Has(qrconst.LookD)
 		DR := lookahead.Has(qrconst.LookDR)
 
 		if R {
 			paths = append(paths, `<path
-	d="M 1 0 H 0.5 A 0.5 0.5 0 0 1 0.5 1 H 1 Z"
+	d="M .5 0 V 1 H 1.5 V 0 Z"
+	fill="rgba(0,0,0,1.)"
 />
 `)
 		}
-		if U {
+		if UR {
 			paths = append(paths, `<path
-	d="M 0 0 V 0.5 A 0.5 0.5 0 0 1 1 .5 V 0 Z"
-/>
-`)
-		}
-		if L {
-			paths = append(paths, `<path
-	d="M 0 1 H 0.5 A 0.5 0.5 0 0 1 0.5 0 H 0 Z"
-/>
-`)
-		}
-		if D {
-			paths = append(paths, `<path
-	d="M 1 1 V 0.5 A 0.5 0.5 0 0 1 0 .5 V 1 Z"
+	d="M .5 .5 H 1 A .5 .5 0 0 1 1.5 0 V -.5 H 1 A .5 .5 0 0 1 .5 0 Z"
+	fill="rgba(0,0,0,1.)"
 />
 `)
 		}
 
-		if UR {
+		if D {
 			paths = append(paths, `<path
-	d="M 1 0.5 V 0 H 0.5 A 0.5 0.5 0 0 1 1 0.5"
-/>
-`)
-		}
-		if UL {
-			paths = append(paths, `<path
-	d="M 0.5 0 H 0 V 0.5 A 0.5 0.5 0 0 1 0.5 0"
-/>
-`)
-		}
-		if DL {
-			paths = append(paths, `<path
-	d="M 0 0.5 V 1 H 0.5 A 0.5 0.5 0 0 1 0 0.5"
+	d="M 1 .5 H 0 V 1.5 H 1 Z"
+	fill="rgba(0,0,0,1.)"
 />
 `)
 		}
 		if DR {
 			paths = append(paths, `<path
-	d="M 0.5 1 H 1 V 0.5 A 0.5 0.5 0 0 1 0.5 1"
+	d="M .5 .5 V 1 A .5 .5 0 0 1 1 1.5 H 1.5 V 1 A .5 .5 0 0 1 1 .5 Z"
+	fill="rgba(0,0,0,1.)"
 />
 `)
 		}
@@ -310,49 +235,125 @@ var PathRenderFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahe
 />
 `}
 	},
+	qrconst.WaterDroplet: func(lookahead qrconst.Lookahead) []string {
+		return []string{`<path
+	d="M 0 0 C .1 .1 1 .15 1 .667 Q 1 1 .667 1 C .25 1 .1 .1 0 0"
+	fill="rgba(0,0,0,1.)"
+/>
+`}
+
+	},
 	qrconst.Star4: func(lookahead qrconst.Lookahead) []string {
 		return []string{`<path
-	d="M 1 0.5 L .67 .33 L 0.5 0 L .33 .33 L 0 .5 L .33 .67 L .5 1 L .67 .67 L 1 .5"
+	d="M 1 .5 L .67 .33 L .5 0 L .33 .33 L 0 .5 L .33 .67 L .5 1 L .67 .67 L 1 .5"
 	fill="rgba(0,0,0,1.)"
 	stroke="rgba(0,0,0,1.)"
 	stroke-linecap="round"
 	stroke-linejoin="round"
-	stroke-width="0.125"
+	stroke-width=".125"
 />
 `}
 	},
 	qrconst.Star5: func(lookahead qrconst.Lookahead) []string {
 		return []string{`<path
-	d="M 1 0.5 L 0.65450849 0.38774301 L 0.6545085 0.02447174 L 0.44098301 0.31836437 L 0.0954915 0.20610737 L 0.309017 0.5 L 0.0954915 0.79389263 L 0.44098301 0.68163563 L 0.6545085 0.97552826 L 0.65450849 0.61225699 L 1 .5"
+	d="M 1 .5 L .65450849 .38774301 L .6545085 .02447174 L .44098301 .31836437 L .0954915 .20610737 L .309017 .5 L .0954915 .79389263 L .44098301 .68163563 L .6545085 .97552826 L .65450849 .61225699 L 1 .5"
 	fill="rgba(0,0,0,1.)"
 	stroke="rgba(0,0,0,1.)"
 	stroke-linecap="round"
 	stroke-linejoin="round"
-	stroke-width="0.125"
+	stroke-width=".125"
 />
 `}
 	},
 	qrconst.Star6: func(lookahead qrconst.Lookahead) []string {
 		return []string{`<path
-	d="M 1 .5 L 0.74999988 0.3556625 L .75 .0669873 L 0.5 0.211325 L .25 .0669873 L 0.25000012 0.3556625 L 0 .5 L 0.25000012 0.6443375 L .25 .9330127 L 0.5 0.788675 L .75 .9330127 L 0.74999988 0.6443375 L 1 .5"
+	d="M 1 .5 L .74999988 .3556625 L .75 .0669873 L .5 .211325 L .25 .0669873 L .25000012 .3556625 L 0 .5 L .25000012 .6443375 L .25 .9330127 L .5 .788675 L .75 .9330127 L .74999988 .6443375 L 1 .5"
 	fill="rgba(0,0,0,1.)"
 	stroke="rgba(0,0,0,1.)"
 	stroke-linecap="round"
 	stroke-linejoin="round"
-	stroke-width="0.1"
+	stroke-width=".1"
 />
 `}
 	},
 	qrconst.Star8: func(lookahead qrconst.Lookahead) []string {
 		return []string{`<path
-	d="M 1 .5 L 0.85355299 0.35355356 L 0.85355339 0.14644661 L 0.64644644 0.14644701 L .5 0 L 0.35355356 0.14644701 L 0.14644661 0.14644661 L 0.14644701 0.35355356 L 0 .5 L 0.14644701 0.64644644 L 0.14644661 0.85355339 L 0.35355356 0.85355299 L .5 1 L 0.64644644 0.85355299 L 0.85355339 0.85355339 L 0.85355299 0.64644644 L 1 .5"
+	d="M 1 .5 L .85355299 .35355356 L .85355339 .14644661 L .64644644 .14644701 L .5 0 L .35355356 .14644701 L .14644661 .14644661 L .14644701 .35355356 L 0 .5 L .14644701 .64644644 L .14644661 .85355339 L .35355356 .85355299 L .5 1 L .64644644 .85355299 L .85355339 .85355339 L .85355299 .64644644 L 1 .5"
 	fill="rgba(0,0,0,1.)"
 	stroke="rgba(0,0,0,1.)"
 	stroke-linecap="round"
 	stroke-linejoin="round"
-	stroke-width="0.025"
+	stroke-width=".025"
 />
 `}
+	},
+	qrconst.Xs: func(lookahead qrconst.Lookahead) []string {
+		var paths []string
+
+		d := "M .5 .25 L .25 0 H 0 V .25 L .25 .5 L 0 .75 "
+
+		R := lookahead.Has(qrconst.LookR)
+		UR := lookahead.Has(qrconst.LookUR)
+
+		D := lookahead.Has(qrconst.LookD)
+		DR := lookahead.Has(qrconst.LookDR)
+
+		if D {
+			d += "V 1.25 "
+		} else {
+			d += "V 1 H .25 "
+		}
+		d += "L .5 .75 "
+
+		if DR {
+			d += "L 1 1.25 H 1.25 V 1 "
+		} else {
+			if D {
+				d += "L 1 1.25 V 1 "
+			} else {
+				d += "L .75 1 H 1 "
+			}
+
+			if R {
+				d += "H 1.25 "
+			} else {
+				d += "V .75 "
+			}
+		}
+		d += "L .75 .5 "
+
+		if UR {
+			d += "L 1.25 0 V -.25 H 1 Z"
+		} else {
+			if R {
+				d += "L 1.25 0 H .75 Z"
+			} else {
+				d += "L 1 .25 V 0 H .75 Z"
+			}
+		}
+
+		paths = append(paths, fmt.Sprintf(
+			`<path
+	d="%s"
+	fill="rgba(0,0,0,1.)"
+/>
+`,
+			d,
+		))
+
+		if lookahead.Has(qrconst.LookStructural) {
+			paths = append(paths, `<path
+	d="M 1 .5 L .5 0 L 0 .5 L .5 1 Z"
+	fill="none"
+	stroke="rgba(0,0,0,1.)"
+	stroke-linecap="round"
+	stroke-linejoin="round"
+	stroke-width=".025"
+/>
+`)
+		}
+
+		return paths
 	},
 	qrconst.Pointillism: func(lookahead qrconst.Lookahead) []string {
 		if lookahead.Has(qrconst.LookStructural) {
@@ -440,119 +441,18 @@ var PathMergeFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahea
 		return paths
 	},
 	qrconst.HorizontalBlob: func(lookahead qrconst.Lookahead) []string {
-		var paths []string
-
-		UR := lookahead.Lacks(qrconst.LookUR) &&
-			lookahead.Has(qrconst.LookR, qrconst.LookU)
-		UL := lookahead.Lacks(qrconst.LookUL) &&
-			lookahead.Has(qrconst.LookU, qrconst.LookL)
-		DL := lookahead.Lacks(qrconst.LookDL) &&
-			lookahead.Has(qrconst.LookL, qrconst.LookD)
-		DR := lookahead.Lacks(qrconst.LookDR) &&
-			lookahead.Has(qrconst.LookD, qrconst.LookR)
-
-		if UR {
-			paths = append(paths, `<path
-	d="M 1 0.5 V 0 H 0.5 A 0.5 0.5 0 0 1 1 0.5"
-/>
-`)
-		}
-		if UL {
-			paths = append(paths, `<path
-	d="M 0.5 0 H 0 V 0.5 A 0.5 0.5 0 0 1 0.5 0"
-/>
-`)
-		}
-		if DL {
-			paths = append(paths, `<path
-	d="M 0 0.5 V 1 H 0.5 A 0.5 0.5 0 0 1 0 0.5"
-/>
-`)
-		}
-		if DR {
-			paths = append(paths, `<path
-	d="M 0.5 1 H 1 V 0.5 A 0.5 0.5 0 0 1 0.5 1"
-/>
-`)
-		}
-
-		return paths
+		return nil
 	},
 	qrconst.VerticalBlob: func(lookahead qrconst.Lookahead) []string {
-		var paths []string
-
-		UR := lookahead.Lacks(qrconst.LookUR) &&
-			lookahead.Has(qrconst.LookR, qrconst.LookU)
-		UL := lookahead.Lacks(qrconst.LookUL) &&
-			lookahead.Has(qrconst.LookU, qrconst.LookL)
-		DL := lookahead.Lacks(qrconst.LookDL) &&
-			lookahead.Has(qrconst.LookL, qrconst.LookD)
-		DR := lookahead.Lacks(qrconst.LookDR) &&
-			lookahead.Has(qrconst.LookD, qrconst.LookR)
-
-		if UR {
-			paths = append(paths, `<path
-	d="M 1 0.5 V 0 H 0.5 A 0.5 0.5 0 0 1 1 0.5"
-/>
-`)
-		}
-		if UL {
-			paths = append(paths, `<path
-	d="M 0.5 0 H 0 V 0.5 A 0.5 0.5 0 0 1 0.5 0"
-/>
-`)
-		}
-		if DL {
-			paths = append(paths, `<path
-	d="M 0 0.5 V 1 H 0.5 A 0.5 0.5 0 0 1 0 0.5"
-/>
-`)
-		}
-		if DR {
-			paths = append(paths, `<path
-	d="M 0.5 1 H 1 V 0.5 A 0.5 0.5 0 0 1 0.5 1"
-/>
-`)
-		}
-
-		return paths
+		return nil
 	},
 	qrconst.Blob: func(lookahead qrconst.Lookahead) []string {
-		var paths []string
-
-		UR := lookahead.Has(qrconst.LookR, qrconst.LookU)
-		UL := lookahead.Has(qrconst.LookU, qrconst.LookL)
-		DL := lookahead.Has(qrconst.LookL, qrconst.LookD)
-		DR := lookahead.Has(qrconst.LookD, qrconst.LookR)
-
-		if UR {
-			paths = append(paths, `<path
-	d="M 1 0.5 V 0 H 0.5 A 0.5 0.5 0 0 1 1 0.5"
-/>
-`)
-		}
-		if UL {
-			paths = append(paths, `<path
-	d="M 0.5 0 H 0 V 0.5 A 0.5 0.5 0 0 1 0.5 0"
-/>
-`)
-		}
-		if DL {
-			paths = append(paths, `<path
-	d="M 0 0.5 V 1 H 0.5 A 0.5 0.5 0 0 1 0 0.5"
-/>
-`)
-		}
-		if DR {
-			paths = append(paths, `<path
-	d="M 0.5 1 H 1 V 0.5 A 0.5 0.5 0 0 1 0.5 1"
-/>
-`)
-		}
-
-		return paths
+		return nil
 	},
 	qrconst.Diamond: func(lookahead qrconst.Lookahead) []string {
+		return nil
+	},
+	qrconst.WaterDroplet: func(lookahead qrconst.Lookahead) []string {
 		return nil
 	},
 	qrconst.Star4: func(lookahead qrconst.Lookahead) []string {
@@ -566,6 +466,61 @@ var PathMergeFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahea
 	},
 	qrconst.Star8: func(lookahead qrconst.Lookahead) []string {
 		return nil
+	},
+	qrconst.Xs: func(lookahead qrconst.Lookahead) []string {
+		var paths []string
+
+		UR := lookahead.Has(qrconst.LookR, qrconst.LookU)
+		UL := lookahead.Has(qrconst.LookU, qrconst.LookL)
+		DL := lookahead.Has(qrconst.LookL, qrconst.LookD)
+		DR := lookahead.Has(qrconst.LookD, qrconst.LookR)
+
+		if UR {
+			paths = append(paths, `<path
+	d="M 1 .5 L .5 0"
+	fill="none"
+	stroke="rgba(0,0,0,1.)"
+	stroke-linecap="round"
+	stroke-linejoin="round"
+	stroke-width=".025"
+/>
+`)
+		}
+		if UL {
+			paths = append(paths, `<path
+	d="M .5 0 L 0 .5"
+	fill="none"
+	stroke="rgba(0,0,0,1.)"
+	stroke-linecap="round"
+	stroke-linejoin="round"
+	stroke-width=".025"
+/>
+`)
+		}
+		if DL {
+			paths = append(paths, `<path
+	d="M 0 .5 L .5 1"
+	fill="none"
+	stroke="rgba(0,0,0,1.)"
+	stroke-linecap="round"
+	stroke-linejoin="round"
+	stroke-width=".025"
+/>
+`)
+		}
+		if DR {
+			paths = append(paths, `<path
+	d="M .5 1 L 1 .5"
+	fill="none"
+	stroke="rgba(0,0,0,1.)"
+	stroke-linecap="round"
+	stroke-linejoin="round"
+	stroke-width=".025"
+/>
+`)
+		}
+
+		return paths
 	},
 	qrconst.Pointillism: func(lookahead qrconst.Lookahead) []string {
 		if lookahead.Has(qrconst.LookStructural) {
