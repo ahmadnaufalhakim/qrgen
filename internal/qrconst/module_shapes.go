@@ -5,6 +5,7 @@ type ModuleShape int
 const (
 	Square ModuleShape = iota
 	Circle
+	TiedCircle
 	HorizontalBlob
 	VerticalBlob
 	Blob
