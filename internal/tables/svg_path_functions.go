@@ -310,6 +310,13 @@ var PathRenderFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahe
 
 		return paths
 	},
+	// TODO: implement LeftLeaf and RightLeaf path rendering functions
+	qrconst.LeftLeaf: func(lookahead qrconst.Lookahead) []string {
+		return nil
+	},
+	qrconst.RightLeaf: func(lookahead qrconst.Lookahead) []string {
+		return nil
+	},
 	qrconst.Diamond: func(lookahead qrconst.Lookahead) []string {
 		return []string{`<path
 	d="M 1 .5 L .5 0 L 0 .5 L .5 1 Z"
@@ -436,6 +443,13 @@ var PathRenderFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahe
 
 		return paths
 	},
+	// TODO: implement Octagon and SmileyFace path rendering functions
+	qrconst.Octagon: func(lookahead qrconst.Lookahead) []string {
+		return nil
+	},
+	qrconst.SmileyFace: func(lookahead qrconst.Lookahead) []string {
+		return nil
+	},
 	qrconst.Pointillism: func(lookahead qrconst.Lookahead) []string {
 		if lookahead.Has(qrconst.LookStructural) {
 			return []string{`<circle
@@ -545,6 +559,13 @@ var PathMergeFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahea
 	qrconst.Blob: func(lookahead qrconst.Lookahead) []string {
 		return nil
 	},
+	// TODO: implement LeftLeaf and RightLeaf path merging functions (if necessary)
+	qrconst.LeftLeaf: func(lookahead qrconst.Lookahead) []string {
+		return nil
+	},
+	qrconst.RightLeaf: func(lookahead qrconst.Lookahead) []string {
+		return nil
+	},
 	qrconst.Diamond: func(lookahead qrconst.Lookahead) []string {
 		return nil
 	},
@@ -617,6 +638,13 @@ var PathMergeFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahea
 		}
 
 		return paths
+	},
+	// TODO: implement Octagon and SmileyFace path merging functions (if necessary)
+	qrconst.Octagon: func(lookahead qrconst.Lookahead) []string {
+		return nil
+	},
+	qrconst.SmileyFace: func(lookahead qrconst.Lookahead) []string {
+		return nil
 	},
 	qrconst.Pointillism: func(lookahead qrconst.Lookahead) []string {
 		if lookahead.Has(qrconst.LookStructural) {
