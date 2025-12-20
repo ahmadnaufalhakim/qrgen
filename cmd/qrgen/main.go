@@ -14,7 +14,8 @@ import (
 var (
 	BLACK     = color.RGBA{0, 0, 0, 255}
 	WHITE     = color.RGBA{255, 255, 255, 255}
-	BLUE      = color.RGBA{78, 159, 229, 255}
+	GREEN     = color.RGBA{27, 165, 8, 255}
+	BLUE      = color.RGBA{48, 129, 229, 255}
 	PINK      = color.RGBA{224, 134, 200, 255}
 	YELLOW    = color.RGBA{251, 208, 67, 255}
 	POO_BROWN = color.RGBA{122, 89, 1, 255}
@@ -37,12 +38,12 @@ func main() {
 		return
 	}
 
-	bg := WHITE
-	fg := BLACK
+	bg := GREEN
+	fg := YELLOW
 
 	start := time.Now()
 	qrRenderer := render.NewRenderer().
-		WithModuleShape(qrconst.Star6).
+		WithModuleShape(qrconst.SmileyFace).
 		WithBackgroundColor(bg).
 		WithForegroundColor(fg)
 
