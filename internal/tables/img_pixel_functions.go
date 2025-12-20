@@ -471,7 +471,7 @@ var PixelRenderFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahe
 		minR := 0.24 * float64(scale)
 		maxR := 0.60 * float64(scale)
 
-		k := .18
+		k := .16
 		t := 1 - math.Exp(-k*float64(neighbors))
 		if t > 1 {
 			t = 1
