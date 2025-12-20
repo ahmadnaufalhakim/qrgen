@@ -7,6 +7,7 @@ import (
 	"image/jpeg"
 	"image/png"
 	"io"
+	"strconv"
 	"strings"
 
 	"github.com/ahmadnaufalhakim/qrgen/internal/qrcode"
@@ -110,8 +111,22 @@ func (r *QRRenderer) RenderSVG(qr qrcode.QRCode, w io.Writer) error {
 		totalSize, totalSize,
 		totalSize*51, totalSize*51,
 	)
+
+	symbols := tables.PathSymbols[r.moduleShape]
+	fmt.Fprint(
+		w,
+		`	<defs>
+		`+strings.ReplaceAll(
+			strings.Join(symbols, "\n\t\t"),
+			"0,0,0,1.",
+			strconv.Itoa(int(r.foregroundColor.R))+","+strconv.Itoa(int(r.foregroundColor.G))+","+strconv.Itoa(int(r.foregroundColor.B))+","+strconv.FormatFloat(float64(r.backgroundColor.A)/255.0, 'f', -1, 64),
+		)+`
+	</defs>
+`,
+	)
+
 	fmt.Fprintf(
-		w, `<rect width="100%%" height="100%%" fill="rgba(%d, %d, %d, %f)"/>
+		w, `	<rect width="100%%" height="100%%" fill="rgba(%d, %d, %d, %f)"/>
 `,
 		r.backgroundColor.R, r.backgroundColor.G, r.backgroundColor.B, float64(r.backgroundColor.A)/255.0,
 	)
@@ -150,11 +165,8 @@ func (r *QRRenderer) RenderSVG(qr qrcode.QRCode, w io.Writer) error {
 
 					fmt.Fprint(
 						w,
-						strings.Split(path, "/>")[0]+
-							fmt.Sprintf(
-								"\ttransform=\"translate(%d %d)\"\n/>\n",
-								quietZone+x, quietZone+y,
-							),
+						`	`+strings.Split(path, "/>")[0]+
+							" x=\""+strconv.Itoa(quietZone+x)+"\" y=\""+strconv.Itoa(quietZone+y)+"\" />\n",
 					)
 				}
 			} else {
@@ -184,19 +196,16 @@ func (r *QRRenderer) RenderSVG(qr qrcode.QRCode, w io.Writer) error {
 
 					fmt.Fprint(
 						w,
-						strings.Split(path, "/>")[0]+
-							fmt.Sprintf(
-								"\ttransform=\"translate(%d %d)\"\n/>\n",
-								quietZone+x, quietZone+y,
-							),
+						`	`+strings.Split(path, "/>")[0]+
+							" x=\""+strconv.Itoa(quietZone+x)+"\" y=\""+strconv.Itoa(quietZone+y)+"\" />\n",
 					)
 				}
 			}
 		}
 	}
 
-	fmt.Fprintf(w, `
-</svg>`)
+	fmt.Fprintf(w, `</svg>
+`)
 
 	return nil
 }
