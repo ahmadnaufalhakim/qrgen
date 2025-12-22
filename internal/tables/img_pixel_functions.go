@@ -344,19 +344,19 @@ var PixelRenderFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahe
 
 		right :=
 			lookahead.Lacks(qrconst.LookR) &&
-				(lookahead.Has(qrconst.LookDR) || lookahead.Has(qrconst.LookUR)) &&
+				lookahead.HasAny(qrconst.LookDR, qrconst.LookUR) &&
 				(x == scale-1 && y == scale/2)
 		up :=
 			lookahead.Lacks(qrconst.LookU) &&
-				(lookahead.Has(qrconst.LookUR) || lookahead.Has(qrconst.LookUL)) &&
+				lookahead.HasAny(qrconst.LookUR, qrconst.LookUL) &&
 				(x == scale/2 && y == 0)
 		left :=
 			lookahead.Lacks(qrconst.LookL) &&
-				(lookahead.Has(qrconst.LookUL) || lookahead.Has(qrconst.LookDL)) &&
+				lookahead.HasAny(qrconst.LookUL, qrconst.LookDL) &&
 				(x == 0 && y == scale/2)
 		down :=
 			lookahead.Lacks(qrconst.LookD) &&
-				(lookahead.Has(qrconst.LookDL) || lookahead.Has(qrconst.LookDR)) &&
+				lookahead.HasAny(qrconst.LookDL, qrconst.LookDR) &&
 				(x == scale/2 && y == scale-1)
 
 		if lookahead.Has(qrconst.LookStructural) {

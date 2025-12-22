@@ -44,3 +44,13 @@ func (l Lookahead) Lacks(las ...Lookahead) bool {
 
 	return true
 }
+
+func (l Lookahead) HasAny(las ...Lookahead) bool {
+	for _, la := range las {
+		if l&la != 0 {
+			return true
+		}
+	}
+
+	return false
+}
