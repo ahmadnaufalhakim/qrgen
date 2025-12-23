@@ -846,7 +846,3 @@ func euclideanDist(x, y int, cx, cy float64) float64 {
 	dy := float64(y) - cy
 	return dx*dx + dy*dy
 }
-
-func manhattanDist(x, y int, cx, cy float64) float64 {
-	return math.Abs(float64(x)-cx) + math.Abs(float64(y)-cy)
-}
