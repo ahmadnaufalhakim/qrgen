@@ -705,7 +705,7 @@ func isInPolygon(x, y, scale, n int) bool {
 	if rho > r {
 		return false
 	}
-	theta := math.Atan2(dy, dx) + math.Pi/float64(n)
+	theta := math.Atan2(dy, dx) + math.Pi/float64(n) - math.Pi/2
 	if theta < 0 {
 		theta += 2 * math.Pi
 	}
