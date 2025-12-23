@@ -266,27 +266,119 @@ var PixelRenderFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahe
 
 		r := cx
 
-		return manhattanDist(x, y, cx, cy) <= r
+		dx := float64(x) - cx
+		dy := cy - float64(y)
+
+		// polar coordinates
+		rho := math.Sqrt(euclideanDist(x, y, cx, cy))
+		if rho > r {
+			return false
+		}
+		theta := math.Atan2(dy, dx) + math.Pi/4
+		if theta < 0 {
+			theta += 2 * math.Pi
+		}
+
+		// sector angle
+		alpha := 2 * math.Pi / 4
+		// reduce angle to first sector
+		thetaPrime := math.Mod(theta+alpha/2, alpha) - alpha/2
+		// apothem
+		apothem := (r + .0625) * math.Cos(math.Pi/4)
+		// max allowed radius at this angle
+		rhoMax := apothem / math.Cos(thetaPrime)
+
+		return rho <= rhoMax
 	},
 	qrconst.Pentagon: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
-		return true
+		cx := mid(scale)
+		cy := mid(scale)
+
+		r := cx
+
+		dx := float64(x) - cx
+		dy := cy - float64(y)
+
+		// polar coordinates
+		rho := math.Sqrt(euclideanDist(x, y, cx, cy))
+		if rho > r {
+			return false
+		}
+		theta := math.Atan2(dy, dx) + math.Pi/5
+		if theta < 0 {
+			theta += 2 * math.Pi
+		}
+
+		// sector angle
+		alpha := 2 * math.Pi / 5
+		// reduce angle to first sector
+		thetaPrime := math.Mod(theta+alpha/2, alpha) - alpha/2
+		// apothem
+		apothem := (r + .0625) * math.Cos(math.Pi/5)
+		// max allowed radius at this angle
+		rhoMax := apothem / math.Cos(thetaPrime)
+
+		return rho <= rhoMax
 	},
 	qrconst.Hexagon: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
-		return true
+		cx := mid(scale)
+		cy := mid(scale)
+
+		r := cx
+
+		dx := float64(x) - cx
+		dy := cy - float64(y)
+
+		// polar coordinates
+		rho := math.Sqrt(euclideanDist(x, y, cx, cy))
+		if rho > r {
+			return false
+		}
+		theta := math.Atan2(dy, dx) + math.Pi/6
+		if theta < 0 {
+			theta += 2 * math.Pi
+		}
+
+		// sector angle
+		alpha := 2 * math.Pi / 6
+		// reduce angle to first sector
+		thetaPrime := math.Mod(theta+alpha/2, alpha) - alpha/2
+		// apothem
+		apothem := (r + .0625) * math.Cos(math.Pi/6)
+		// max allowed radius at this angle
+		rhoMax := apothem / math.Cos(thetaPrime)
+
+		return rho <= rhoMax
 	},
 	qrconst.Octagon: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		cx := mid(scale)
 		cy := mid(scale)
 
 		r := cx
-		dx := math.Abs(float64(x) - cx)
-		dy := math.Abs(float64(y) - cy)
 
-		// A square intersect a diamond → octagon
-		cond1 := math.Max(dx, dy) <= r
-		cond2 := dx+dy <= r*math.Sqrt2
+		dx := float64(x) - cx
+		dy := cy - float64(y)
 
-		return cond1 && cond2
+		// polar coordinates
+		rho := math.Sqrt(euclideanDist(x, y, cx, cy))
+		if rho > r {
+			return false
+		}
+		theta := math.Atan2(dy, dx) + math.Pi/8
+		if theta < 0 {
+			theta += 2 * math.Pi
+		}
+
+		// sector angle
+		alpha := 2 * math.Pi / 8
+		// reduce angle to first sector
+		thetaPrime := math.Mod(theta+alpha/2, alpha) - alpha/2
+		// apothem
+		apothem := (r + .0625) * math.Cos(math.Pi/8)
+		// max allowed radius at this angle
+		rhoMax := apothem / math.Cos(thetaPrime)
+
+		return rho <= rhoMax
 	},
 	qrconst.Star4: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		cx := mid(scale)
