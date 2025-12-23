@@ -382,13 +382,10 @@ var PathSymbols = map[qrconst.ModuleShape][]string{
 			fill="rgba(0,0,0,1.)"
 		/>`,
 	},
-	qrconst.WaterDroplet: {
-		`<path
-			id="` + qrconst.WaterDroplet.String() + `__render"
-			d="M 0 0 C .1 .1 1 .15 1 .667 Q 1 1 .667 1 C .25 1 .1 .1 0 0"
-			fill="rgba(0,0,0,1.)"
-		/>`,
-	},
+	// TODO: implement Pentagon, Hexagon, and Octagon path symbols
+	qrconst.Pentagon: {},
+	qrconst.Hexagon:  {},
+	qrconst.Octagon:  {},
 	qrconst.Star4: {
 		`<path
 			id="` + qrconst.Star4.String() + `__render"
@@ -431,6 +428,13 @@ var PathSymbols = map[qrconst.ModuleShape][]string{
 			stroke-linecap="round"
 			stroke-linejoin="round"
 			stroke-width=".125"
+		/>`,
+	},
+	qrconst.WaterDroplet: {
+		`<path
+			id="` + qrconst.WaterDroplet.String() + `__render"
+			d="M 0 0 C .1 .1 1 .15 1 .667 Q 1 1 .667 1 C .25 1 .1 .1 0 0"
+			fill="rgba(0,0,0,1.)"
 		/>`,
 	},
 	qrconst.Xs: {
@@ -606,8 +610,6 @@ var PathSymbols = map[qrconst.ModuleShape][]string{
 			stroke-width=".025"
 		/>`,
 	},
-	// TODO: implement Octagon path symbols
-	qrconst.Octagon: {},
 	qrconst.SmileyFace: {
 		`<mask id="` + qrconst.SmileyFace.String() + `__mask">
 			<rect width="100%" height="100%" fill="black" />
@@ -929,7 +931,51 @@ var PathRenderFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahe
 			use(qrconst.Diamond, "render", ""),
 		}
 	},
-	// TODO: implement Octagon path rendering functions
+	// TODO: implement Pentagon, Hexagon, and Octagon path rendering functions
+	qrconst.Pentagon: func(lookahead qrconst.Lookahead) []string {
+		R := lookahead.Has(qrconst.LookR)
+		D := lookahead.Has(qrconst.LookD)
+
+		rules := []rule{
+			{R && D, "--r-d"},
+			{R, "--r"},
+			{D, "--d"},
+		}
+
+		for _, rule := range rules {
+			if rule.cond {
+				return []string{
+					use(qrconst.Square, "render", rule.suffix),
+				}
+			}
+		}
+
+		return []string{
+			use(qrconst.Square, "render", ""),
+		}
+	},
+	qrconst.Hexagon: func(lookahead qrconst.Lookahead) []string {
+		R := lookahead.Has(qrconst.LookR)
+		D := lookahead.Has(qrconst.LookD)
+
+		rules := []rule{
+			{R && D, "--r-d"},
+			{R, "--r"},
+			{D, "--d"},
+		}
+
+		for _, rule := range rules {
+			if rule.cond {
+				return []string{
+					use(qrconst.Square, "render", rule.suffix),
+				}
+			}
+		}
+
+		return []string{
+			use(qrconst.Square, "render", ""),
+		}
+	},
 	qrconst.Octagon: func(lookahead qrconst.Lookahead) []string {
 		return nil
 	},
@@ -1077,7 +1123,13 @@ var PathMergeFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahea
 	qrconst.Diamond: func(lookahead qrconst.Lookahead) []string {
 		return nil
 	},
-	// TODO: implement Octagon and SmileyFace path merging functions (if necessary)
+	// TODO: implement Pentagon, Hexagon, and Octagon path merging functions (if necessary)
+	qrconst.Pentagon: func(lookahead qrconst.Lookahead) []string {
+		return nil
+	},
+	qrconst.Hexagon: func(lookahead qrconst.Lookahead) []string {
+		return nil
+	},
 	qrconst.Octagon: func(lookahead qrconst.Lookahead) []string {
 		return nil
 	},

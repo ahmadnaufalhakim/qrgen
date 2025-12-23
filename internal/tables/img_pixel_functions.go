@@ -268,6 +268,12 @@ var PixelRenderFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahe
 
 		return manhattanDist(x, y, cx, cy) <= r
 	},
+	qrconst.Pentagon: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+		return true
+	},
+	qrconst.Hexagon: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+		return true
+	},
 	qrconst.Octagon: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		cx := mid(scale)
 		cy := mid(scale)
@@ -641,6 +647,12 @@ var PixelMergeFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahea
 		return false
 	},
 	qrconst.Diamond: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+		return false
+	},
+	qrconst.Pentagon: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+		return false
+	},
+	qrconst.Hexagon: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		return false
 	},
 	qrconst.Octagon: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
