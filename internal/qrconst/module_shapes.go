@@ -12,13 +12,15 @@ const (
 	LeftLeaf
 	RightLeaf
 	Diamond
-	WaterDroplet
+	Pentagon
+	Hexagon
+	Octagon
 	Star4
 	Star5
 	Star6
 	Star8
+	WaterDroplet
 	Xs
-	Octagon
 	SmileyFace
 	Pointillism
 )
@@ -43,8 +45,12 @@ func (ms ModuleShape) String() string {
 		return "rightLeaf"
 	case Diamond:
 		return "diamond"
-	case WaterDroplet:
-		return "waterDroplet"
+	case Pentagon:
+		return "pentagon"
+	case Hexagon:
+		return "hexagon"
+	case Octagon:
+		return "octagon"
 	case Star4:
 		return "star4"
 	case Star5:
@@ -53,10 +59,10 @@ func (ms ModuleShape) String() string {
 		return "star6"
 	case Star8:
 		return "star8"
+	case WaterDroplet:
+		return "waterDroplet"
 	case Xs:
 		return "xs"
-	case Octagon:
-		return "octagon"
 	case SmileyFace:
 		return "smileyFace"
 	case Pointillism:
