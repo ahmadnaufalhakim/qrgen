@@ -261,184 +261,28 @@ var PixelRenderFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahe
 		return condUL && condDR && !condLeafVeins
 	},
 	qrconst.Diamond: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
-		cx := mid(scale)
-		cy := mid(scale)
-
-		r := cx
-
-		dx := float64(x) - cx
-		dy := cy - float64(y)
-
-		// polar coordinates
-		rho := math.Sqrt(euclideanDist(x, y, cx, cy))
-		if rho > r {
-			return false
-		}
-		theta := math.Atan2(dy, dx) + math.Pi/4
-		if theta < 0 {
-			theta += 2 * math.Pi
-		}
-
-		// sector angle
-		alpha := 2 * math.Pi / 4
-		// reduce angle to first sector
-		thetaPrime := math.Mod(theta+alpha/2, alpha) - alpha/2
-		// apothem
-		apothem := (r + .0625) * math.Cos(math.Pi/4)
-		// max allowed radius at this angle
-		rhoMax := apothem / math.Cos(thetaPrime)
-
-		return rho <= rhoMax
+		return isInPolygon(x, y, scale, 4)
 	},
 	qrconst.Pentagon: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
-		cx := mid(scale)
-		cy := mid(scale)
-
-		r := cx
-
-		dx := float64(x) - cx
-		dy := cy - float64(y)
-
-		// polar coordinates
-		rho := math.Sqrt(euclideanDist(x, y, cx, cy))
-		if rho > r {
-			return false
-		}
-		theta := math.Atan2(dy, dx) + math.Pi/5
-		if theta < 0 {
-			theta += 2 * math.Pi
-		}
-
-		// sector angle
-		alpha := 2 * math.Pi / 5
-		// reduce angle to first sector
-		thetaPrime := math.Mod(theta+alpha/2, alpha) - alpha/2
-		// apothem
-		apothem := (r + .0625) * math.Cos(math.Pi/5)
-		// max allowed radius at this angle
-		rhoMax := apothem / math.Cos(thetaPrime)
-
-		return rho <= rhoMax
+		return isInPolygon(x, y, scale, 5)
 	},
 	qrconst.Hexagon: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
-		cx := mid(scale)
-		cy := mid(scale)
-
-		r := cx
-
-		dx := float64(x) - cx
-		dy := cy - float64(y)
-
-		// polar coordinates
-		rho := math.Sqrt(euclideanDist(x, y, cx, cy))
-		if rho > r {
-			return false
-		}
-		theta := math.Atan2(dy, dx) + math.Pi/6
-		if theta < 0 {
-			theta += 2 * math.Pi
-		}
-
-		// sector angle
-		alpha := 2 * math.Pi / 6
-		// reduce angle to first sector
-		thetaPrime := math.Mod(theta+alpha/2, alpha) - alpha/2
-		// apothem
-		apothem := (r + .0625) * math.Cos(math.Pi/6)
-		// max allowed radius at this angle
-		rhoMax := apothem / math.Cos(thetaPrime)
-
-		return rho <= rhoMax
+		return isInPolygon(x, y, scale, 6)
 	},
 	qrconst.Octagon: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
-		cx := mid(scale)
-		cy := mid(scale)
-
-		r := cx
-
-		dx := float64(x) - cx
-		dy := cy - float64(y)
-
-		// polar coordinates
-		rho := math.Sqrt(euclideanDist(x, y, cx, cy))
-		if rho > r {
-			return false
-		}
-		theta := math.Atan2(dy, dx) + math.Pi/8
-		if theta < 0 {
-			theta += 2 * math.Pi
-		}
-
-		// sector angle
-		alpha := 2 * math.Pi / 8
-		// reduce angle to first sector
-		thetaPrime := math.Mod(theta+alpha/2, alpha) - alpha/2
-		// apothem
-		apothem := (r + .0625) * math.Cos(math.Pi/8)
-		// max allowed radius at this angle
-		rhoMax := apothem / math.Cos(thetaPrime)
-
-		return rho <= rhoMax
+		return isInPolygon(x, y, scale, 8)
 	},
 	qrconst.Star4: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
-		cx := mid(scale)
-		cy := mid(scale)
-
-		dx := float64(x) - cx
-		dy := cy - float64(y)
-
-		d2 := euclideanDist(x, y, cx, cy)
-
-		angle := math.Atan2(dy, dx)
-		rBase := float64(scale) * 0.33
-		starRadius := rBase * (1 + 0.25*math.Cos(4*angle))
-
-		return math.Sqrt(d2) <= starRadius*1.25
+		return isInStar(x, y, scale, 4)
 	},
 	qrconst.Star5: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
-		cx := mid(scale)
-		cy := mid(scale)
-
-		dx := float64(x) - cx
-		dy := cy - float64(y)
-
-		d2 := euclideanDist(x, y, cx, cy)
-
-		angle := math.Atan2(dy, dx)
-		rBase := float64(scale) * 0.33
-		starRadius := rBase * (1 + 0.25*math.Cos(5*angle))
-
-		return math.Sqrt(d2) <= starRadius*1.25
+		return isInStar(x, y, scale, 5)
 	},
 	qrconst.Star6: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
-		cx := mid(scale)
-		cy := mid(scale)
-
-		dx := float64(x) - cx
-		dy := cy - float64(y)
-
-		d2 := euclideanDist(x, y, cx, cy)
-
-		angle := math.Atan2(dy, dx)
-		rBase := float64(scale) * 0.33
-		starRadius := rBase * (1 + 0.25*math.Cos(6*angle))
-
-		return math.Sqrt(d2) <= starRadius*1.25
+		return isInStar(x, y, scale, 6)
 	},
 	qrconst.Star8: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
-		cx := mid(scale)
-		cy := mid(scale)
-
-		dx := float64(x) - cx
-		dy := cy - float64(y)
-
-		d2 := euclideanDist(x, y, cx, cy)
-
-		angle := math.Atan2(dy, dx)
-		rBase := float64(scale) * 0.33
-		starRadius := rBase * (1 + 0.25*math.Cos(8*angle))
-
-		return math.Sqrt(d2) <= starRadius*1.25
+		return isInStar(x, y, scale, 8)
 	},
 	qrconst.WaterDroplet: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		// Parametric function
@@ -845,4 +689,51 @@ func euclideanDist(x, y int, cx, cy float64) float64 {
 	dx := float64(x) - cx
 	dy := float64(y) - cy
 	return dx*dx + dy*dy
+}
+
+func isInPolygon(x, y, scale, n int) bool {
+	cx := mid(scale)
+	cy := mid(scale)
+
+	r := cx
+
+	dx := float64(x) - cx
+	dy := cy - float64(y)
+
+	// polar coordinates
+	rho := math.Sqrt(euclideanDist(x, y, cx, cy))
+	if rho > r {
+		return false
+	}
+	theta := math.Atan2(dy, dx) + math.Pi/float64(n)
+	if theta < 0 {
+		theta += 2 * math.Pi
+	}
+
+	// sector angle
+	alpha := 2 * math.Pi / float64(n)
+	// reduce angle to first sector
+	thetaPrime := math.Mod(theta+alpha/2, alpha) - alpha/2
+	// apothem
+	apothem := (r + .0625) * math.Cos(math.Pi/float64(n))
+	// max allowed radius at this angle
+	rhoMax := apothem / math.Cos(thetaPrime)
+
+	return rho <= rhoMax
+}
+
+func isInStar(x, y, scale, n int) bool {
+	cx := mid(scale)
+	cy := mid(scale)
+
+	dx := float64(x) - cx
+	dy := cy - float64(y)
+
+	d2 := euclideanDist(x, y, cx, cy)
+
+	angle := math.Atan2(dy, dx)
+	rBase := float64(scale) * 0.33
+	starRadius := rBase * (1 + 0.25*math.Cos(float64(n)*angle))
+
+	return math.Sqrt(d2) <= starRadius*1.25
 }
