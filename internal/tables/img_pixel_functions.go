@@ -268,26 +268,19 @@ var PixelRenderFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahe
 
 		return manhattanDist(x, y, cx, cy) <= r
 	},
-	qrconst.WaterDroplet: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
-		// Parametric function
-		// x(t) = at^3 + bt^2 + ct + d
-		// y(t) = pt^3 + qt^2
-		a := .7 * (.66 * float64(scale))
-		b := -.4 * (.66 * float64(scale))
-		c := -1 * (.66 * float64(scale))
-		d := .72 * (.66 * float64(scale))
-		p := 1.125 * (.66 * float64(scale))
-		q := 2.8 * (.66 * float64(scale))
+	qrconst.Octagon: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+		cx := mid(scale)
+		cy := mid(scale)
 
-		// Convert to cartesian function
-		A := (b*p - a*q) / p
-		B := (float64(x) - 6.25) - a*(float64(scale-y)-1)/p - d
-		M := A*B*p - A*c*q + c*c*p
-		N := B * (A*q - c*q)
+		r := cx
+		dx := math.Abs(float64(x) - cx)
+		dy := math.Abs(float64(y) - cy)
 
-		f := A*math.Pow(A*A*(float64(scale-y)-1)-N, 2) + c*M*(A*A*(float64(scale-y)-1)-N) - B*M*M
+		// A square intersect a diamond → octagon
+		cond1 := math.Max(dx, dy) <= r
+		cond2 := dx+dy <= r*math.Sqrt2
 
-		return f > 0
+		return cond1 && cond2
 	},
 	qrconst.Star4: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		cx := mid(scale)
@@ -349,6 +342,27 @@ var PixelRenderFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahe
 
 		return math.Sqrt(d2) <= starRadius*1.25
 	},
+	qrconst.WaterDroplet: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+		// Parametric function
+		// x(t) = at^3 + bt^2 + ct + d
+		// y(t) = pt^3 + qt^2
+		a := .7 * (.66 * float64(scale))
+		b := -.4 * (.66 * float64(scale))
+		c := -1 * (.66 * float64(scale))
+		d := .72 * (.66 * float64(scale))
+		p := 1.125 * (.66 * float64(scale))
+		q := 2.8 * (.66 * float64(scale))
+
+		// Convert to cartesian function
+		A := (b*p - a*q) / p
+		B := (float64(x) - 6.25) - a*(float64(scale-y)-1)/p - d
+		M := A*B*p - A*c*q + c*c*p
+		N := B * (A*q - c*q)
+
+		f := A*math.Pow(A*A*(float64(scale-y)-1)-N, 2) + c*M*(A*A*(float64(scale-y)-1)-N) - B*M*M
+
+		return f > 0
+	},
 	qrconst.Xs: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		forwardSlash :=
 			(float64(x+y) >= 1.5*float64(scale)/2-1) && (float64(x+y) <= 2.5*float64(scale)/2-1)
@@ -382,20 +396,6 @@ var PixelRenderFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahe
 
 		return forwardSlash || backwardSlash ||
 			right || up || left || down
-	},
-	qrconst.Octagon: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
-		cx := mid(scale)
-		cy := mid(scale)
-
-		r := cx
-		dx := math.Abs(float64(x) - cx)
-		dy := math.Abs(float64(y) - cy)
-
-		// A square intersect a diamond → octagon
-		cond1 := math.Max(dx, dy) <= r
-		cond2 := dx+dy <= r*math.Sqrt2
-
-		return cond1 && cond2
 	},
 	qrconst.SmileyFace: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		cx := mid(scale)
@@ -643,7 +643,7 @@ var PixelMergeFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahea
 	qrconst.Diamond: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		return false
 	},
-	qrconst.WaterDroplet: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+	qrconst.Octagon: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		return false
 	},
 	qrconst.Star4: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
@@ -656,6 +656,9 @@ var PixelMergeFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahea
 		return false
 	},
 	qrconst.Star8: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+		return false
+	},
+	qrconst.WaterDroplet: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		return false
 	},
 	qrconst.Xs: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
@@ -681,9 +684,6 @@ var PixelMergeFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahea
 			lowerRightFill
 
 		return upperRight || upperLeft || lowerLeft || lowerRight
-	},
-	qrconst.Octagon: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
-		return false
 	},
 	qrconst.SmileyFace: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		// cx := mid(scale)

@@ -929,10 +929,9 @@ var PathRenderFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahe
 			use(qrconst.Diamond, "render", ""),
 		}
 	},
-	qrconst.WaterDroplet: func(lookahead qrconst.Lookahead) []string {
-		return []string{
-			use(qrconst.WaterDroplet, "render", ""),
-		}
+	// TODO: implement Octagon path rendering functions
+	qrconst.Octagon: func(lookahead qrconst.Lookahead) []string {
+		return nil
 	},
 	qrconst.Star4: func(lookahead qrconst.Lookahead) []string {
 		return []string{
@@ -952,6 +951,11 @@ var PathRenderFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahe
 	qrconst.Star8: func(lookahead qrconst.Lookahead) []string {
 		return []string{
 			use(qrconst.Star8, "render", ""),
+		}
+	},
+	qrconst.WaterDroplet: func(lookahead qrconst.Lookahead) []string {
+		return []string{
+			use(qrconst.WaterDroplet, "render", ""),
 		}
 	},
 	qrconst.Xs: func(lookahead qrconst.Lookahead) []string {
@@ -1000,10 +1004,6 @@ var PathRenderFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahe
 		return []string{
 			use(qrconst.Xs, "render", prefix),
 		}
-	},
-	// TODO: implement Octagon path rendering functions
-	qrconst.Octagon: func(lookahead qrconst.Lookahead) []string {
-		return nil
 	},
 	qrconst.SmileyFace: func(lookahead qrconst.Lookahead) []string {
 		return []string{
@@ -1077,7 +1077,8 @@ var PathMergeFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahea
 	qrconst.Diamond: func(lookahead qrconst.Lookahead) []string {
 		return nil
 	},
-	qrconst.WaterDroplet: func(lookahead qrconst.Lookahead) []string {
+	// TODO: implement Octagon and SmileyFace path merging functions (if necessary)
+	qrconst.Octagon: func(lookahead qrconst.Lookahead) []string {
 		return nil
 	},
 	qrconst.Star4: func(lookahead qrconst.Lookahead) []string {
@@ -1090,6 +1091,9 @@ var PathMergeFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahea
 		return nil
 	},
 	qrconst.Star8: func(lookahead qrconst.Lookahead) []string {
+		return nil
+	},
+	qrconst.WaterDroplet: func(lookahead qrconst.Lookahead) []string {
 		return nil
 	},
 	qrconst.Xs: func(lookahead qrconst.Lookahead) []string {
@@ -1115,10 +1119,6 @@ var PathMergeFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahea
 		)
 
 		return paths
-	},
-	// TODO: implement Octagon and SmileyFace path merging functions (if necessary)
-	qrconst.Octagon: func(lookahead qrconst.Lookahead) []string {
-		return nil
 	},
 	qrconst.SmileyFace: func(lookahead qrconst.Lookahead) []string {
 		return nil
