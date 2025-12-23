@@ -272,16 +272,27 @@ func (r *QRRenderer) renderImage(qr qrcode.QRCode) image.Image {
 		}
 	}
 
+	var pixelRenderFunc func(x, y, scale int, lookahead qrconst.Lookahead) bool
+	var pixelMergeFunc func(x, y, scale int, lookahead qrconst.Lookahead) bool
+
 	// Fill modules
 	for y := range qr.Size {
 		for x := range qr.Size {
-			lookahead := buildLookahead(qr, x, y)
 			startX, startY := x*scale+margin, y*scale+margin
+
+			lookahead := buildLookahead(qr, x, y)
+			if lookahead.Has(qrconst.LookFinder) && r.defaultFinder {
+				pixelRenderFunc = tables.PixelRenderFunctions[qrconst.Square]
+				pixelMergeFunc = tables.PixelMergeFunctions[qrconst.Square]
+			} else {
+				pixelRenderFunc = tables.PixelRenderFunctions[r.moduleShape]
+				pixelMergeFunc = tables.PixelMergeFunctions[r.moduleShape]
+			}
 
 			if qr.Modules[y][x] {
 				for dy := range scale {
 					for dx := range scale {
-						if tables.PixelRenderFunctions[r.moduleShape](dx, dy, scale, lookahead) {
+						if pixelRenderFunc(dx, dy, scale, lookahead) {
 							img.Set(startX+dx, startY+dy, fg)
 						} else {
 							img.Set(startX+dx, startY+dy, bg)
@@ -291,7 +302,7 @@ func (r *QRRenderer) renderImage(qr qrcode.QRCode) image.Image {
 			} else {
 				for dy := range scale {
 					for dx := range scale {
-						if tables.PixelMergeFunctions[r.moduleShape](dx, dy, scale, lookahead) {
+						if pixelMergeFunc(dx, dy, scale, lookahead) {
 							img.Set(startX+dx, startY+dy, fg)
 						} else {
 							img.Set(startX+dx, startY+dy, bg)
