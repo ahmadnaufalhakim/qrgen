@@ -17,6 +17,7 @@ import (
 
 type QRRenderer struct {
 	moduleShape     qrconst.ModuleShape
+	defaultFinder   bool
 	backgroundColor color.RGBA
 	foregroundColor color.RGBA
 	kernelType      string
@@ -27,6 +28,7 @@ type QRRenderer struct {
 func NewRenderer() *QRRenderer {
 	return &QRRenderer{
 		moduleShape:     qrconst.Square,
+		defaultFinder:   true,
 		backgroundColor: color.RGBA{255, 255, 255, 255},
 		foregroundColor: color.RGBA{0, 0, 0, 255},
 		kernelType:      "Lanczos2",
@@ -39,6 +41,13 @@ func (r *QRRenderer) WithModuleShape(
 	moduleShape qrconst.ModuleShape,
 ) *QRRenderer {
 	r.moduleShape = moduleShape
+	return r
+}
+
+func (r *QRRenderer) WithDefaultFinder(
+	defaultFinder bool,
+) *QRRenderer {
+	r.defaultFinder = defaultFinder
 	return r
 }
 
@@ -113,6 +122,9 @@ func (r *QRRenderer) RenderSVG(qr qrcode.QRCode, w io.Writer) error {
 	)
 
 	symbols := tables.PathSymbols[r.moduleShape]
+	if r.defaultFinder && r.moduleShape != qrconst.Square {
+		symbols = append(symbols, tables.PathSymbols[qrconst.Square]...)
+	}
 	fmt.Fprint(
 		w,
 		`	<defs>
@@ -131,12 +143,19 @@ func (r *QRRenderer) RenderSVG(qr qrcode.QRCode, w io.Writer) error {
 		r.backgroundColor.R, r.backgroundColor.G, r.backgroundColor.B, float64(r.backgroundColor.A)/255.0,
 	)
 
-	pathRenderFunc := tables.PathRenderFunctions[r.moduleShape]
-	pathMergeFunc := tables.PathMergeFunctions[r.moduleShape]
+	var pathRenderFunc func(lookahead qrconst.Lookahead) []string
+	var pathMergeFunc func(lookahead qrconst.Lookahead) []string
 
 	for y, row := range qr.Modules {
 		for x, module := range row {
 			lookahead := buildLookahead(qr, x, y)
+			if lookahead.Has(qrconst.LookFinder) && r.defaultFinder {
+				pathRenderFunc = tables.PathRenderFunctions[qrconst.Square]
+				pathMergeFunc = tables.PathMergeFunctions[qrconst.Square]
+			} else {
+				pathRenderFunc = tables.PathRenderFunctions[r.moduleShape]
+				pathMergeFunc = tables.PathMergeFunctions[r.moduleShape]
+			}
 
 			if module {
 				svgPaths := pathRenderFunc(lookahead)
