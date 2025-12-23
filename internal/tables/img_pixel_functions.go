@@ -166,26 +166,26 @@ var PixelRenderFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahe
 		distFromUR := euclideanDist(x, y, r, 0)
 		distFromDL := euclideanDist(x, y, 0, r)
 
-		edgeR2UR :=
-			lookahead.Has(qrconst.LookU) &&
-				lookahead.Lacks(qrconst.LookR) &&
-				(x == scale-1 && distFromDL > r*r+4*r+4)
-		edgeUR2U :=
-			lookahead.Has(qrconst.LookR) &&
-				lookahead.Lacks(qrconst.LookU) &&
-				(y == 0 && distFromDL > r*r+4*r+4)
-		edgeL2DL :=
-			lookahead.Has(qrconst.LookD) &&
-				lookahead.Lacks(qrconst.LookL) &&
-				(x == 0 && distFromUR > r*r+4*r+4)
-		edgeDL2D :=
-			lookahead.Has(qrconst.LookL) &&
-				lookahead.Lacks(qrconst.LookD) &&
-				(y == scale-1 && distFromUR > r*r+4*r+4)
+		// edgeR2UR :=
+		// 	lookahead.Has(qrconst.LookU) &&
+		// 		lookahead.Lacks(qrconst.LookR) &&
+		// 		(x == scale-1 && distFromDL > r*r+4*r+4)
+		// edgeUR2U :=
+		// 	lookahead.Has(qrconst.LookR) &&
+		// 		lookahead.Lacks(qrconst.LookU) &&
+		// 		(y == 0 && distFromDL > r*r+4*r+4)
+		// edgeL2DL :=
+		// 	lookahead.Has(qrconst.LookD) &&
+		// 		lookahead.Lacks(qrconst.LookL) &&
+		// 		(x == 0 && distFromUR > r*r+4*r+4)
+		// edgeDL2D :=
+		// 	lookahead.Has(qrconst.LookL) &&
+		// 		lookahead.Lacks(qrconst.LookD) &&
+		// 		(y == scale-1 && distFromUR > r*r+4*r+4)
 
-		if edgeR2UR || edgeUR2U || edgeL2DL || edgeDL2D {
-			return true
-		}
+		// if edgeR2UR || edgeUR2U || edgeL2DL || edgeDL2D {
+		// 	return true
+		// }
 
 		// upper-right center's POV
 		condUR := distFromUR < r*r+4*r+4
@@ -194,12 +194,19 @@ var PixelRenderFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahe
 		condDL := distFromDL < r*r+4*r+4
 
 		// leaf veins patterns
-		condLeafVeins := ((x == y) ||
-			(x == 1*scale/5 && y < 1*scale/5) || (y == 1*scale/5 && x < 1*scale/5) ||
-			(x == 2*scale/5 && y < 2*scale/5) || (y == 2*scale/5 && x < 2*scale/5) ||
-			(x == 3*scale/5 && y < 3*scale/5) || (y == 3*scale/5 && x < 3*scale/5) ||
-			(x == 4*scale/5 && y < 4*scale/5) || (y == 4*scale/5 && x < 4*scale/5))
-		// (x != 0 && y != 0) && (x != scale-1 && y != scale-1)
+		condLeafVeins := (x == y)
+		if lookahead.Has(qrconst.LookStructural) {
+			condLeafVeins = (condLeafVeins ||
+				(x == 2*scale/5 && y < 2*scale/5) || (y == 2*scale/5 && x < 2*scale/5) ||
+				(x == 7*scale/10 && y < 7*scale/10) || (y == 7*scale/10 && x < 7*scale/10))
+		} else {
+			condLeafVeins = (condLeafVeins ||
+				(x == 1*scale/5 && y < 1*scale/5) || (y == 1*scale/5 && x < 1*scale/5) ||
+				(x == 2*scale/5 && y < 2*scale/5) || (y == 2*scale/5 && x < 2*scale/5) ||
+				(x == 3*scale/5 && y < 3*scale/5) || (y == 3*scale/5 && x < 3*scale/5) ||
+				(x == 4*scale/5 && y < 4*scale/5) || (y == 4*scale/5 && x < 4*scale/5))
+			// (x != 0 && y != 0) && (x != scale-1 && y != scale-1)
+		}
 
 		return condUR && condDL && !condLeafVeins
 	},
@@ -209,26 +216,26 @@ var PixelRenderFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahe
 		distFromUL := euclideanDist(x, y, 0, 0)
 		distFromDR := euclideanDist(x, y, r, r)
 
-		edgeU2UL :=
-			lookahead.Has(qrconst.LookL) &&
-				lookahead.Lacks(qrconst.LookU) &&
-				(y == 0 && distFromDR > r*r+4*r+4)
-		edgeUL2L :=
-			lookahead.Has(qrconst.LookU) &&
-				lookahead.Lacks(qrconst.LookL) &&
-				(x == 0 && distFromDR > r*r+4*r+4)
-		edgeD2DR :=
-			lookahead.Has(qrconst.LookR) &&
-				lookahead.Lacks(qrconst.LookD) &&
-				(y == scale-1 && distFromUL > r*r+4*r+4)
-		edgeDR2R :=
-			lookahead.Has(qrconst.LookD) &&
-				lookahead.Lacks(qrconst.LookR) &&
-				(x == scale-1 && distFromUL > r*r+4*r+4)
+		// edgeU2UL :=
+		// 	lookahead.Has(qrconst.LookL) &&
+		// 		lookahead.Lacks(qrconst.LookU) &&
+		// 		(y == 0 && distFromDR > r*r+4*r+4)
+		// edgeUL2L :=
+		// 	lookahead.Has(qrconst.LookU) &&
+		// 		lookahead.Lacks(qrconst.LookL) &&
+		// 		(x == 0 && distFromDR > r*r+4*r+4)
+		// edgeD2DR :=
+		// 	lookahead.Has(qrconst.LookR) &&
+		// 		lookahead.Lacks(qrconst.LookD) &&
+		// 		(y == scale-1 && distFromUL > r*r+4*r+4)
+		// edgeDR2R :=
+		// 	lookahead.Has(qrconst.LookD) &&
+		// 		lookahead.Lacks(qrconst.LookR) &&
+		// 		(x == scale-1 && distFromUL > r*r+4*r+4)
 
-		if edgeU2UL || edgeUL2L || edgeD2DR || edgeDR2R {
-			return true
-		}
+		// if edgeU2UL || edgeUL2L || edgeD2DR || edgeDR2R {
+		// 	return true
+		// }
 
 		// upper-left center's POV
 		condUL := distFromUL < r*r+4*r+4
@@ -237,12 +244,19 @@ var PixelRenderFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahe
 		condDR := distFromDR < r*r+4*r+4
 
 		// leaf veins patterns
-		condLeafVeins := ((x+y == scale-1) ||
-			(scale-x == 1*scale/5 && y < 1*scale/5) || (scale-y == 1*scale/5 && x > 1*scale/5) ||
-			(scale-x == 2*scale/5 && y < 2*scale/5) || (scale-y == 2*scale/5 && x > 2*scale/5) ||
-			(scale-x == 3*scale/5 && y < 3*scale/5) || (scale-y == 3*scale/5 && x > 3*scale/5) ||
-			(scale-x == 4*scale/5 && y < 4*scale/5) || (scale-y == 4*scale/5 && x > 4*scale/5))
-		// (x != 0 && y != scale-1) && (x != scale-1 && y != 0)
+		condLeafVeins := (x == y)
+		if lookahead.Has(qrconst.LookStructural) {
+			condLeafVeins = (condLeafVeins ||
+				(x == 2*scale/5 && y < 2*scale/5) || (y == 2*scale/5 && x < 2*scale/5) ||
+				(x == 7*scale/10 && y < 7*scale/10) || (y == 7*scale/10 && x < 7*scale/10))
+		} else {
+			condLeafVeins = (condLeafVeins ||
+				(x == 1*scale/5 && y < 1*scale/5) || (y == 1*scale/5 && x < 1*scale/5) ||
+				(x == 2*scale/5 && y < 2*scale/5) || (y == 2*scale/5 && x < 2*scale/5) ||
+				(x == 3*scale/5 && y < 3*scale/5) || (y == 3*scale/5 && x < 3*scale/5) ||
+				(x == 4*scale/5 && y < 4*scale/5) || (y == 4*scale/5 && x < 4*scale/5))
+			// (x != 0 && y != 0) && (x != scale-1 && y != scale-1)
+		}
 
 		return condUL && condDR && !condLeafVeins
 	},
@@ -395,43 +409,43 @@ var PixelRenderFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahe
 		dx := float64(x) - cx
 		dy := cy - float64(y)
 
-		edgeR2UR :=
-			lookahead.Has(qrconst.LookU) &&
-				lookahead.Lacks(qrconst.LookR, qrconst.LookUR) &&
-				(x == scale-1 && dy >= 0)
-		edgeUR2U :=
-			lookahead.Has(qrconst.LookR) &&
-				lookahead.Lacks(qrconst.LookUR, qrconst.LookU) &&
-				(y == 0 && dx >= 0)
-		edgeU2UL :=
-			lookahead.Has(qrconst.LookL) &&
-				lookahead.Lacks(qrconst.LookU, qrconst.LookUL) &&
-				(y == 0 && dx <= 0)
-		edgeUL2L :=
-			lookahead.Has(qrconst.LookU) &&
-				lookahead.Lacks(qrconst.LookUL, qrconst.LookL) &&
-				(x == 0 && dy >= 0)
-		edgeL2DL :=
-			lookahead.Has(qrconst.LookD) &&
-				lookahead.Lacks(qrconst.LookL, qrconst.LookDL) &&
-				(x == 0 && dy <= 0)
-		edgeDL2D :=
-			lookahead.Has(qrconst.LookL) &&
-				lookahead.Lacks(qrconst.LookDL, qrconst.LookD) &&
-				(y == scale-1 && dx <= 0)
-		edgeD2DR :=
-			lookahead.Has(qrconst.LookR) &&
-				lookahead.Lacks(qrconst.LookD, qrconst.LookDR) &&
-				(y == scale-1 && dx >= 0)
-		edgeDR2R :=
-			lookahead.Has(qrconst.LookD) &&
-				lookahead.Lacks(qrconst.LookDR, qrconst.LookR) &&
-				(x == scale-1 && dy <= 0)
+		// edgeR2UR :=
+		// 	lookahead.Has(qrconst.LookU) &&
+		// 		lookahead.Lacks(qrconst.LookR, qrconst.LookUR) &&
+		// 		(x == scale-1 && dy >= 0)
+		// edgeUR2U :=
+		// 	lookahead.Has(qrconst.LookR) &&
+		// 		lookahead.Lacks(qrconst.LookUR, qrconst.LookU) &&
+		// 		(y == 0 && dx >= 0)
+		// edgeU2UL :=
+		// 	lookahead.Has(qrconst.LookL) &&
+		// 		lookahead.Lacks(qrconst.LookU, qrconst.LookUL) &&
+		// 		(y == 0 && dx <= 0)
+		// edgeUL2L :=
+		// 	lookahead.Has(qrconst.LookU) &&
+		// 		lookahead.Lacks(qrconst.LookUL, qrconst.LookL) &&
+		// 		(x == 0 && dy >= 0)
+		// edgeL2DL :=
+		// 	lookahead.Has(qrconst.LookD) &&
+		// 		lookahead.Lacks(qrconst.LookL, qrconst.LookDL) &&
+		// 		(x == 0 && dy <= 0)
+		// edgeDL2D :=
+		// 	lookahead.Has(qrconst.LookL) &&
+		// 		lookahead.Lacks(qrconst.LookDL, qrconst.LookD) &&
+		// 		(y == scale-1 && dx <= 0)
+		// edgeD2DR :=
+		// 	lookahead.Has(qrconst.LookR) &&
+		// 		lookahead.Lacks(qrconst.LookD, qrconst.LookDR) &&
+		// 		(y == scale-1 && dx >= 0)
+		// edgeDR2R :=
+		// 	lookahead.Has(qrconst.LookD) &&
+		// 		lookahead.Lacks(qrconst.LookDR, qrconst.LookR) &&
+		// 		(x == scale-1 && dy <= 0)
 
-		if edgeR2UR || edgeUR2U || edgeU2UL || edgeUL2L ||
-			edgeL2DL || edgeDL2D || edgeD2DR || edgeDR2R {
-			return true
-		}
+		// if edgeR2UR || edgeUR2U || edgeU2UL || edgeUL2L ||
+		// 	edgeL2DL || edgeDL2D || edgeD2DR || edgeDR2R {
+		// 	return true
+		// }
 
 		distFromOrigin := euclideanDist(x, y, cx, cy)
 		distFromLeftEye := euclideanDist(x, y, cxLeftEye, cyLeftEye)
@@ -591,38 +605,38 @@ var PixelMergeFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahea
 		return false
 	},
 	qrconst.LeftLeaf: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
-		cx := mid(scale)
-		cy := mid(scale)
+		// cx := mid(scale)
+		// cy := mid(scale)
 
-		r := cx
-		dx := float64(x) - cx
-		dy := cy - float64(y)
+		// r := cx
+		// dx := float64(x) - cx
+		// dy := cy - float64(y)
 
-		cornerUR := lookahead.Has(qrconst.LookR, qrconst.LookUR, qrconst.LookU) && (dx >= 0 && dy >= 0)
-		cornerDL := lookahead.Has(qrconst.LookL, qrconst.LookDL, qrconst.LookD) && (dx <= 0 && dy <= 0)
+		// cornerUR := lookahead.Has(qrconst.LookR, qrconst.LookUR, qrconst.LookU) && (dx >= 0 && dy >= 0)
+		// cornerDL := lookahead.Has(qrconst.LookL, qrconst.LookDL, qrconst.LookD) && (dx <= 0 && dy <= 0)
 
-		if cornerUR || cornerDL {
-			d2 := euclideanDist(x, y, cx, cy)
-			return d2 >= r*r-r+15 && d2 <= r*r+r+15
-		}
+		// if cornerUR || cornerDL {
+		// 	d2 := euclideanDist(x, y, cx, cy)
+		// 	return d2 >= r*r-r+15 && d2 <= r*r+r+15
+		// }
 
 		return false
 	},
 	qrconst.RightLeaf: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
-		cx := mid(scale)
-		cy := mid(scale)
+		// cx := mid(scale)
+		// cy := mid(scale)
 
-		r := cx
-		dx := float64(x) - cx
-		dy := cy - float64(y)
+		// r := cx
+		// dx := float64(x) - cx
+		// dy := cy - float64(y)
 
-		cornerUL := lookahead.Has(qrconst.LookU, qrconst.LookUL, qrconst.LookL) && (dx <= 0 && dy >= 0)
-		cornerDR := lookahead.Has(qrconst.LookD, qrconst.LookDR, qrconst.LookR) && (dx >= 0 && dy <= 0)
+		// cornerUL := lookahead.Has(qrconst.LookU, qrconst.LookUL, qrconst.LookL) && (dx <= 0 && dy >= 0)
+		// cornerDR := lookahead.Has(qrconst.LookD, qrconst.LookDR, qrconst.LookR) && (dx >= 0 && dy <= 0)
 
-		if cornerUL || cornerDR {
-			d2 := euclideanDist(x, y, cx, cy)
-			return d2 >= r*r-r+15 && d2 <= r*r+r+15
-		}
+		// if cornerUL || cornerDR {
+		// 	d2 := euclideanDist(x, y, cx, cy)
+		// 	return d2 >= r*r-r+15 && d2 <= r*r+r+15
+		// }
 
 		return false
 	},
@@ -645,22 +659,26 @@ var PixelMergeFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahea
 		return false
 	},
 	qrconst.Xs: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
-		upperRight :=
-			lookahead.Has(qrconst.LookR, qrconst.LookU) &&
-				((float64(x-y) >= 1.5*float64(scale)/2 && float64(x-y) <= 2*float64(scale)/2) ||
-					x-y == 1*scale/2+1)
-		upperLeft :=
-			lookahead.Has(qrconst.LookU, qrconst.LookL) &&
-				((float64(x+y) >= 0*float64(scale)/2 && float64(x+y) <= 0.5*float64(scale)/2-1) ||
-					x+y == 1*scale/2-1)
-		lowerLeft :=
-			lookahead.Has(qrconst.LookL, qrconst.LookD) &&
-				((float64(x-y) >= -2*float64(scale)/2 && float64(x-y) <= -1.5*float64(scale)/2) ||
-					x-y == -1*scale/2-1)
-		lowerRight :=
-			lookahead.Has(qrconst.LookD, qrconst.LookR) &&
-				((float64(x+y) >= 3.5*float64(scale)/2-1 && float64(x+y) <= 4*float64(scale)/2) ||
-					x+y == 3*scale/2)
+		upperRightFill := float64(x-y) >= 1.5*float64(scale)/2 && float64(x-y) <= 2*float64(scale)/2
+		upperLeftFill := float64(x+y) >= 0*float64(scale)/2 && float64(x+y) <= 0.5*float64(scale)/2-1
+		lowerLeftFill := float64(x-y) >= -2*float64(scale)/2 && float64(x-y) <= -1.5*float64(scale)/2
+		lowerRightFill := float64(x+y) >= 3.5*float64(scale)/2-1 && float64(x+y) <= 4*float64(scale)/2
+
+		if !lookahead.HasAny(qrconst.LookFinder, qrconst.LookSeparator) {
+			upperRightFill = upperRightFill || x-y == 1*scale/2+1
+			upperLeftFill = upperLeftFill || x+y == 1*scale/2-1
+			lowerLeftFill = lowerLeftFill || x-y == -1*scale/2-1
+			lowerRightFill = lowerRightFill || x+y == 3*scale/2
+		}
+
+		upperRight := lookahead.Has(qrconst.LookR, qrconst.LookU) &&
+			upperRightFill
+		upperLeft := lookahead.Has(qrconst.LookU, qrconst.LookL) &&
+			upperLeftFill
+		lowerLeft := lookahead.Has(qrconst.LookL, qrconst.LookD) &&
+			lowerLeftFill
+		lowerRight := lookahead.Has(qrconst.LookD, qrconst.LookR) &&
+			lowerRightFill
 
 		return upperRight || upperLeft || lowerLeft || lowerRight
 	},
@@ -668,32 +686,32 @@ var PixelMergeFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahea
 		return false
 	},
 	qrconst.SmileyFace: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
-		cx := mid(scale)
-		cy := mid(scale)
+		// cx := mid(scale)
+		// cy := mid(scale)
 
-		r := cx
-		dx := float64(x) - cx
-		dy := cy - float64(y)
+		// r := cx
+		// dx := float64(x) - cx
+		// dy := cy - float64(y)
 
-		cornerUR := lookahead.Has(qrconst.LookR, qrconst.LookUR, qrconst.LookU) && (dx >= 0 && dy >= 0)
-		cornerUL := lookahead.Has(qrconst.LookU, qrconst.LookUL, qrconst.LookL) && (dx <= 0 && dy >= 0)
-		cornerDL := lookahead.Has(qrconst.LookL, qrconst.LookDL, qrconst.LookD) && (dx <= 0 && dy <= 0)
-		cornerDR := lookahead.Has(qrconst.LookD, qrconst.LookDR, qrconst.LookR) && (dx >= 0 && dy <= 0)
+		// cornerUR := lookahead.Has(qrconst.LookR, qrconst.LookUR, qrconst.LookU) && (dx >= 0 && dy >= 0)
+		// cornerUL := lookahead.Has(qrconst.LookU, qrconst.LookUL, qrconst.LookL) && (dx <= 0 && dy >= 0)
+		// cornerDL := lookahead.Has(qrconst.LookL, qrconst.LookDL, qrconst.LookD) && (dx <= 0 && dy <= 0)
+		// cornerDR := lookahead.Has(qrconst.LookD, qrconst.LookDR, qrconst.LookR) && (dx >= 0 && dy <= 0)
 
-		if cornerUR || cornerUL || cornerDL || cornerDR {
-			d2 := euclideanDist(x, y, cx, cy)
-			return d2 >= r*r-1.25*r && d2 <= r*r+1.25*r
-		}
+		// if cornerUR || cornerUL || cornerDL || cornerDR {
+		// 	d2 := euclideanDist(x, y, cx, cy)
+		// 	return d2 >= r*r-1.25*r && d2 <= r*r+1.25*r
+		// }
 
 		return false
 	},
 	qrconst.Pointillism: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
-		cx := mid(scale)
-		cy := mid(scale)
-
-		if lookahead.Has(qrconst.LookStructural) {
+		if lookahead.HasAny(qrconst.LookFinder, qrconst.LookSeparator) {
 			return false
 		}
+
+		cx := mid(scale)
+		cy := mid(scale)
 
 		neighbors := 0
 		mask := qrconst.LookR
