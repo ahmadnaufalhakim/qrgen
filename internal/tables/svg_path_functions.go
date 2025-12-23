@@ -20,12 +20,17 @@ var PathSymbols = map[qrconst.ModuleShape][]string{
 		/>`,
 		`<path
 			id="` + qrconst.Square.String() + `__render--r"
-			d="M .96 0 V 1 H 1.04 V 0 Z"
+			d="M 0 0 V 1 H 1.04 V 0 Z"
 			fill="rgba(0,0,0,1.)"
 		/>`,
 		`<path
 			id="` + qrconst.Square.String() + `__render--d"
-			d="M 1 .96 H 0 V 1.04 H 1 Z"
+			d="M 1 0 H 0 V 1.04 H 1 Z"
+			fill="rgba(0,0,0,1.)"
+		/>`,
+		`<path
+			id="` + qrconst.Square.String() + `__render--r-d"
+			d="M 0 0 V 1.04 H 1 V 1 H 1.04 V 0 Z"
 			fill="rgba(0,0,0,1.)"
 		/>`,
 	},
@@ -250,9 +255,126 @@ var PathSymbols = map[qrconst.ModuleShape][]string{
 			fill="rgba(0,0,0,1.)"
 		/>`,
 	},
-	// TODO: implement LeftLeaf and RightLeaf path symbols
-	qrconst.LeftLeaf:  {},
-	qrconst.RightLeaf: {},
+	qrconst.LeftLeaf: {
+		`<g id="` + qrconst.LeftLeaf.String() + `__base">
+			<rect width="100%" height="100%" fill="black" />
+
+			<!-- Leaf surface (visible) -->
+			<path
+				d="M 0 0 Q -.04 1.04 1 1 Q 1.04 -.04 0 0 Z"
+				fill="white"
+			/>
+
+			<!-- Leaf veins (cut out) -->
+			<path
+				d="M 1 1 L 0 0"
+				fill="none"
+				stroke="black"
+				stroke-width=".04"
+				stroke-linecap="circle"
+			/>
+		</g>`,
+		`<path
+			id="` + qrconst.LeftLeaf.String() + `__veins"
+			d="M .2 0 V .2 H 0
+			M .4 0 V .4 H 0
+			M .6 0 V .6 H 0
+			M .8 0 V .8 H 0"
+			fill="none"
+			stroke="black"
+			stroke-width=".025"
+			stroke-linecap="square"
+		/>`,
+		`<path
+			id="` + qrconst.LeftLeaf.String() + `__veins--structural"
+			d="M .4 0 V .4 H 0
+			M .7 0 V .7 H 0"
+			fill="none"
+			stroke="black"
+			stroke-width=".025"
+			stroke-linecap="square"
+		/>`,
+		`<mask id="` + qrconst.LeftLeaf.String() + `__mask">
+			<use href="#` + qrconst.LeftLeaf.String() + `__base" />
+			<use href="#` + qrconst.LeftLeaf.String() + `__veins" />
+		</mask>`,
+		`<mask id="` + qrconst.LeftLeaf.String() + `__mask--structural">
+			<use href="#` + qrconst.LeftLeaf.String() + `__base" />
+			<use href="#` + qrconst.LeftLeaf.String() + `__veins--structural" />
+		</mask>`,
+		`<rect
+			id="` + qrconst.LeftLeaf.String() + `__render"
+			width="1" height="1"
+			fill="rgba(0,0,0,1.)"
+			mask="url(#` + qrconst.LeftLeaf.String() + `__mask)"
+		/>`,
+		`<rect
+			id="` + qrconst.LeftLeaf.String() + `__render--structural"
+			width="1" height="1"
+			fill="rgba(0,0,0,1.)"
+			mask="url(#` + qrconst.LeftLeaf.String() + `__mask--structural)"
+		/>`,
+	},
+	qrconst.RightLeaf: {
+		`<g id="` + qrconst.RightLeaf.String() + `__base">
+			<rect width="100%" height="100%" fill="black" />
+
+			<!-- Leaf surface (visible) -->
+			<path
+				d="M 1 0 Q -.04 -.04 0 1 Q 1.04 1.04 1 0 Z"
+				fill="white"
+			/>
+
+			<!-- Leaf veins (cut out) -->
+			<path
+				d="M 0 1 L 1 0"
+				fill="none"
+				stroke="black"
+				stroke-width=".04"
+				stroke-linecap="circle"
+			/>
+		</g>`,
+		`<path
+			id="` + qrconst.RightLeaf.String() + `__veins"
+			d="M .8 0 V .2 H 1
+			M .6 0 V .4 H 1
+			M .4 0 V .6 H 1
+			M .2 0 V .8 H 1"
+			fill="none"
+			stroke="black"
+			stroke-width=".025"
+			stroke-linecap="square"
+		/>`,
+		`<path
+			id="` + qrconst.RightLeaf.String() + `__veins--structural"
+			d="M .6 0 V .4 H 1
+			M .3 0 V .7 H 1"
+			fill="none"
+			stroke="black"
+			stroke-width=".025"
+			stroke-linecap="square"
+		/>`,
+		`<mask id="` + qrconst.RightLeaf.String() + `__mask">
+			<use href="#` + qrconst.RightLeaf.String() + `__base" />
+			<use href="#` + qrconst.RightLeaf.String() + `__veins" />
+		</mask>`,
+		`<mask id="` + qrconst.RightLeaf.String() + `__mask--structural">
+			<use href="#` + qrconst.RightLeaf.String() + `__base" />
+			<use href="#` + qrconst.RightLeaf.String() + `__veins--structural" />
+		</mask>`,
+		`<rect
+			id="` + qrconst.RightLeaf.String() + `__render"
+			width="1" height="1"
+			fill="rgba(0,0,0,1.)"
+			mask="url(#` + qrconst.RightLeaf.String() + `__mask)"
+		/>`,
+		`<rect
+			id="` + qrconst.RightLeaf.String() + `__render--structural"
+			width="1" height="1"
+			fill="rgba(0,0,0,1.)"
+			mask="url(#` + qrconst.RightLeaf.String() + `__mask--structural)"
+		/>`,
+	},
 	qrconst.Diamond: {
 		`<path
 			id="` + qrconst.Diamond.String() + `__render"
@@ -637,22 +759,26 @@ var PathSymbols = map[qrconst.ModuleShape][]string{
 
 var PathRenderFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahead) []string{
 	qrconst.Square: func(lookahead qrconst.Lookahead) []string {
-		paths := []string{
-			use(qrconst.Square, "render", ""),
-		}
-
 		R := lookahead.Has(qrconst.LookR)
 		D := lookahead.Has(qrconst.LookD)
 
-		paths = applyRules(
-			paths, qrconst.Square, "render",
-			[]rule{
-				{R, "--r"},
-				{D, "--d"},
-			},
-		)
+		rules := []rule{
+			{R && D, "--r-d"},
+			{R, "--r"},
+			{D, "--d"},
+		}
 
-		return paths
+		for _, rule := range rules {
+			if rule.cond {
+				return []string{
+					use(qrconst.Square, "render", rule.suffix),
+				}
+			}
+		}
+
+		return []string{
+			use(qrconst.Square, "render", ""),
+		}
 	},
 	qrconst.Circle: func(lookahead qrconst.Lookahead) []string {
 		return []string{
@@ -778,12 +904,25 @@ var PathRenderFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahe
 
 		return paths
 	},
-	// TODO: implement LeftLeaf and RightLeaf path rendering functions
 	qrconst.LeftLeaf: func(lookahead qrconst.Lookahead) []string {
-		return nil
+		var prefix string
+		if lookahead.Has(qrconst.LookStructural) {
+			prefix += "--structural"
+		}
+
+		return []string{
+			use(qrconst.LeftLeaf, "render", prefix),
+		}
 	},
 	qrconst.RightLeaf: func(lookahead qrconst.Lookahead) []string {
-		return nil
+		var prefix string
+		if lookahead.Has(qrconst.LookStructural) {
+			prefix += "--structural"
+		}
+
+		return []string{
+			use(qrconst.RightLeaf, "render", prefix),
+		}
 	},
 	qrconst.Diamond: func(lookahead qrconst.Lookahead) []string {
 		return []string{
@@ -794,7 +933,6 @@ var PathRenderFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahe
 		return []string{
 			use(qrconst.WaterDroplet, "render", ""),
 		}
-
 	},
 	qrconst.Star4: func(lookahead qrconst.Lookahead) []string {
 		return []string{
@@ -823,64 +961,44 @@ var PathRenderFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahe
 		D := lookahead.Has(qrconst.LookD)
 		DR := lookahead.Has(qrconst.LookDR)
 
-		if lookahead.Has(qrconst.LookStructural) {
-			rules := []rule{
-				{R && DR && D, "--structural-r-dr-d"},
-				{UR && DR && D, "--structural-ur-dr-d"},
-				{DR && D, "--structural-dr-d"},
-				{UR && R && D, "--structural-ur-r-d"},
-				{R && D, "--structural-r-d"},
-				{UR && D, "--structural-ur-d"},
-				{D, "--structural-d"},
+		rules := []rule{
+			{UR && DR && D, "ur-dr-d"},
+			{R && DR && D, "r-dr-d"},
+			{DR && D, "dr-d"},
+			{UR && R && D, "ur-r-d"},
+			{UR && D, "ur-d"},
+			{R && D, "r-d"},
+			{D, "d"},
 
-				{R && DR, "--structural-r-dr"},
-				{UR && DR, "--structural-ur-dr"},
-				{DR, "--structural-dr"},
-				{UR && R, "--structural-ur-r"},
-				{R, "--structural-r"},
-				{UR, "--structural-ur"},
-			}
-
-			for _, rule := range rules {
-				if rule.cond {
-					return []string{
-						use(qrconst.Xs, "render", rule.suffix),
-					}
-				}
-			}
-
-			return []string{
-				use(qrconst.Xs, "render", "--structural"),
-			}
+			{UR && DR, "ur-dr"},
+			{R && DR, "r-dr"},
+			{DR, "dr"},
+			{UR && R, "ur-r"},
+			{UR, "ur"},
+			{R, "r"},
 		}
 
-		rules := []rule{
-			{R && DR && D, "--r-dr-d"},
-			{UR && DR && D, "--ur-dr-d"},
-			{DR && D, "--dr-d"},
-			{UR && R && D, "--ur-r-d"},
-			{R && D, "--r-d"},
-			{UR && D, "--ur-d"},
-			{D, "--d"},
-
-			{R && DR, "--r-dr"},
-			{UR && DR, "--ur-dr"},
-			{DR, "--dr"},
-			{UR && R, "--ur-r"},
-			{R, "--r"},
-			{UR, "--ur"},
+		var prefix string
+		if lookahead.Has(qrconst.LookStructural) {
+			prefix += "--structural"
 		}
 
 		for _, rule := range rules {
 			if rule.cond {
-				return []string{
-					use(qrconst.Xs, "render", rule.suffix),
+				if prefix == "" {
+					return []string{
+						use(qrconst.Xs, "render", "--"+rule.suffix),
+					}
+				} else {
+					return []string{
+						use(qrconst.Xs, "render", prefix+"-"+rule.suffix),
+					}
 				}
 			}
 		}
 
 		return []string{
-			use(qrconst.Xs, "render", ""),
+			use(qrconst.Xs, "render", prefix),
 		}
 	},
 	// TODO: implement Octagon path rendering functions
@@ -950,7 +1068,6 @@ var PathMergeFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahea
 	qrconst.Blob: func(lookahead qrconst.Lookahead) []string {
 		return nil
 	},
-	// TODO: implement LeftLeaf and RightLeaf path merging functions (if necessary)
 	qrconst.LeftLeaf: func(lookahead qrconst.Lookahead) []string {
 		return nil
 	},
@@ -976,6 +1093,10 @@ var PathMergeFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahea
 		return nil
 	},
 	qrconst.Xs: func(lookahead qrconst.Lookahead) []string {
+		if lookahead.HasAny(qrconst.LookFinder, qrconst.LookSeparator) {
+			return nil
+		}
+
 		var paths []string
 
 		UR := lookahead.Has(qrconst.LookR, qrconst.LookU)
@@ -1003,7 +1124,7 @@ var PathMergeFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahea
 		return nil
 	},
 	qrconst.Pointillism: func(lookahead qrconst.Lookahead) []string {
-		if lookahead.Has(qrconst.LookStructural) {
+		if lookahead.HasAny(qrconst.LookFinder, qrconst.LookSeparator) {
 			return nil
 		}
 
