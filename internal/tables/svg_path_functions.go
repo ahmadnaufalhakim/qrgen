@@ -378,14 +378,31 @@ var PathSymbols = map[qrconst.ModuleShape][]string{
 	qrconst.Diamond: {
 		`<path
 			id="` + qrconst.Diamond.String() + `__render"
-			d="M 1 .5 L .5 0 L 0 .5 L .5 1 Z"
+			d="M .5 0 L 0 .5 L .5 1 L 1 .5 Z"
 			fill="rgba(0,0,0,1.)"
 		/>`,
 	},
-	// TODO: implement Pentagon, Hexagon, and Octagon path symbols
-	qrconst.Pentagon: {},
-	qrconst.Hexagon:  {},
-	qrconst.Octagon:  {},
+	qrconst.Pentagon: {
+		`<path
+			id="` + qrconst.Pentagon.String() + `__render"
+			d="M .5 0 L .02447174 .3454915 L .20610737 .9045085 L .79389263 .9045085 L .97552826 .3454915 Z"
+			fill="rgba(0,0,0,1.)"
+		/>`,
+	},
+	qrconst.Hexagon: {
+		`<path
+			id="` + qrconst.Hexagon.String() + `__render"
+			d="M .5 0 L .0669873 .25 L .0669873 .75 L .5 1 L .9330127 .75 L .9330127 .25 Z"
+			fill="rgba(0,0,0,1.)"
+		/>`,
+	},
+	qrconst.Octagon: {
+		`<path
+			id="` + qrconst.Octagon.String() + `__render"
+			d="M .5 0 L .14644661 .14644661 L 0 .5 L .14644661 .85355339 L .5 1 L .85355339 .85355339 L 1 .5 L .85355339 .14644661 Z"
+			fill="rgba(0,0,0,1.)"
+		/>`,
+	},
 	qrconst.Star4: {
 		`<path
 			id="` + qrconst.Star4.String() + `__render"
@@ -931,53 +948,20 @@ var PathRenderFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahe
 			use(qrconst.Diamond, "render", ""),
 		}
 	},
-	// TODO: implement Pentagon, Hexagon, and Octagon path rendering functions
 	qrconst.Pentagon: func(lookahead qrconst.Lookahead) []string {
-		R := lookahead.Has(qrconst.LookR)
-		D := lookahead.Has(qrconst.LookD)
-
-		rules := []rule{
-			{R && D, "--r-d"},
-			{R, "--r"},
-			{D, "--d"},
-		}
-
-		for _, rule := range rules {
-			if rule.cond {
-				return []string{
-					use(qrconst.Square, "render", rule.suffix),
-				}
-			}
-		}
-
 		return []string{
-			use(qrconst.Square, "render", ""),
+			use(qrconst.Pentagon, "render", ""),
 		}
 	},
 	qrconst.Hexagon: func(lookahead qrconst.Lookahead) []string {
-		R := lookahead.Has(qrconst.LookR)
-		D := lookahead.Has(qrconst.LookD)
-
-		rules := []rule{
-			{R && D, "--r-d"},
-			{R, "--r"},
-			{D, "--d"},
-		}
-
-		for _, rule := range rules {
-			if rule.cond {
-				return []string{
-					use(qrconst.Square, "render", rule.suffix),
-				}
-			}
-		}
-
 		return []string{
-			use(qrconst.Square, "render", ""),
+			use(qrconst.Hexagon, "render", ""),
 		}
 	},
 	qrconst.Octagon: func(lookahead qrconst.Lookahead) []string {
-		return nil
+		return []string{
+			use(qrconst.Octagon, "render", ""),
+		}
 	},
 	qrconst.Star4: func(lookahead qrconst.Lookahead) []string {
 		return []string{
@@ -1123,7 +1107,6 @@ var PathMergeFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahea
 	qrconst.Diamond: func(lookahead qrconst.Lookahead) []string {
 		return nil
 	},
-	// TODO: implement Pentagon, Hexagon, and Octagon path merging functions (if necessary)
 	qrconst.Pentagon: func(lookahead qrconst.Lookahead) []string {
 		return nil
 	},
