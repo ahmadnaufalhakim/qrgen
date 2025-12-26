@@ -21,6 +21,7 @@ const (
 	Star5
 	Star6
 	Star8
+	Heart
 	WaterDroplet
 	Xs
 	SmileyFace
@@ -65,6 +66,8 @@ func (ms ModuleShape) String() string {
 		return "star6"
 	case Star8:
 		return "star8"
+	case Heart:
+		return "heart"
 	case WaterDroplet:
 		return "waterDroplet"
 	case Xs:

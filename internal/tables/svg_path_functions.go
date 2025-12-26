@@ -491,6 +491,13 @@ var PathSymbols = map[qrconst.ModuleShape][]string{
 			stroke-width=".125"
 		/>`,
 	},
+	qrconst.Heart: {
+		`<path
+			id="` + qrconst.Heart.String() + `__render"
+			d="M .2921 .0807 C .1584 .0807 .05 .198 .05 .3426 C .05 .4121 .0755 .4787 .1209 .5279 L .4788 .915 C .4905 .9276 .5095 .9276 .5212 .915 L .8791 .5279 C .9245 .4787 .95 .4121 .95 .3426 C .95 .198 .8416 .0807 .7079 .0807 C .6437 .0807 .5821 .1083 .5367 .1574 L .5 .1971 L .4633 .1574 C .4179 .1083 .3563 .0807 .2921 .0807 Z"
+			fill="rgba(0,0,0,1.)"
+		/>`,
+	},
 	qrconst.WaterDroplet: {
 		`<path
 			id="` + qrconst.WaterDroplet.String() + `__render"
@@ -677,39 +684,39 @@ var PathSymbols = map[qrconst.ModuleShape][]string{
 
 			<!-- Face (visible) -->
 			<path
-				d="M 0.5 0.5 m -0.5 0
-				a 0.5 0.5 0 1 0 1 0
-				a 0.5 0.5 0 1 0 -1 0"
+				d="M .5 .5 m -.5 0
+				a .5 .5 0 1 0 1 0
+				a .5 .5 0 1 0 -1 0"
 				fill="white"
 			/>
 
 			<!-- Eyes (cut out) -->
 			<path
-				d="M 0.775 0.333
-				a 0.075 0.075 0 1 0 -0.15 0
-				a 0.075 0.075 0 1 0 0.15 0"
+				d="M .775 .333
+				a .075 .075 0 1 0 -.15 0
+				a .075 .075 0 1 0 .15 0"
 				fill="black"
 			/>
 			<path
-				d="M 0.225 0.333
-				a 0.075 0.075 0 1 0 0.15 0
-				a 0.075 0.075 0 1 0 -0.15 0"
+				d="M .225 .333
+				a .075 .075 0 1 0 .15 0
+				a .075 .075 0 1 0 -.15 0"
 				fill="black"
 			/>
 
 			<!-- Nose (stroke cuts) -->
 			<path
-				d="M 0.5 0.45 V 0.55"
+				d="M .5 .45 V .55"
 				stroke="black"
-				stroke-width="0.035"
+				stroke-width=".035"
 				stroke-linecap="square"
 			/>
 
 			<!-- Mouth (stroke cuts) -->
 			<path
-				d="M 0.2625 0.65 Q 0.5 0.9 0.7375 0.65"
+				d="M .2625 .65 Q .5 .9 .7375 .65"
 				stroke="black"
-				stroke-width="0.05"
+				stroke-width=".05"
 				stroke-linecap="round"
 				fill="none"
 			/>
@@ -1071,6 +1078,11 @@ var PathRenderFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahe
 			use(qrconst.Star8, "render", ""),
 		}
 	},
+	qrconst.Heart: func(lookahead qrconst.Lookahead) []string {
+		return []string{
+			use(qrconst.Heart, "render", ""),
+		}
+	},
 	qrconst.WaterDroplet: func(lookahead qrconst.Lookahead) []string {
 		return []string{
 			use(qrconst.WaterDroplet, "render", ""),
@@ -1220,6 +1232,9 @@ var PathMergeFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahea
 		return nil
 	},
 	qrconst.Star8: func(lookahead qrconst.Lookahead) []string {
+		return nil
+	},
+	qrconst.Heart: func(lookahead qrconst.Lookahead) []string {
 		return nil
 	},
 	qrconst.WaterDroplet: func(lookahead qrconst.Lookahead) []string {

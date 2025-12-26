@@ -326,6 +326,15 @@ var PixelRenderFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahe
 	qrconst.Star8: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		return isInStar(x, y, scale, 8)
 	},
+	qrconst.Heart: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+		X := float64(x)/float64(scale) - .5
+		Y := .6 - float64(y)/float64(scale)
+
+		lhs := math.Pow(math.Pow(X, 2)+math.Pow(Y, 2)-.125, 3)
+		rhs := math.Pow(X, 2) * math.Pow(Y, 3)
+
+		return lhs <= rhs
+	},
 	qrconst.WaterDroplet: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		// Parametric function
 		// x(t) = at^3 + bt^2 + ct + d
@@ -652,6 +661,9 @@ var PixelMergeFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahea
 		return false
 	},
 	qrconst.Star8: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+		return false
+	},
+	qrconst.Heart: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		return false
 	},
 	qrconst.WaterDroplet: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
