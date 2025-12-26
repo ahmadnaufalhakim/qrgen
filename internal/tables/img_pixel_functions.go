@@ -286,17 +286,17 @@ var PixelRenderFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahe
 		condDR := distFromDR < r*r+4*r+4
 
 		// leaf veins patterns
-		condLeafVeins := (x == y)
+		condLeafVeins := (x+y == scale-1)
 		if lookahead.Has(qrconst.LookStructural) {
 			condLeafVeins = (condLeafVeins ||
-				(x == 2*scale/5 && y < 2*scale/5) || (y == 2*scale/5 && x < 2*scale/5) ||
-				(x == 7*scale/10 && y < 7*scale/10) || (y == 7*scale/10 && x < 7*scale/10))
+				(scale-x == 2*scale/5+1 && y < 2*scale/5) || (scale-y == 2*scale/5-1 && x >= 2*scale/5-1) ||
+				(scale-x == 7*scale/10+1 && y < 7*scale/10) || (scale-y == 7*scale/10-1 && x >= 7*scale/10-1))
 		} else {
 			condLeafVeins = (condLeafVeins ||
-				(x == 1*scale/5 && y < 1*scale/5) || (y == 1*scale/5 && x < 1*scale/5) ||
-				(x == 2*scale/5 && y < 2*scale/5) || (y == 2*scale/5 && x < 2*scale/5) ||
-				(x == 3*scale/5 && y < 3*scale/5) || (y == 3*scale/5 && x < 3*scale/5) ||
-				(x == 4*scale/5 && y < 4*scale/5) || (y == 4*scale/5 && x < 4*scale/5))
+				(scale-x == 1*scale/5+2 && y <= 1*scale/5) || (scale-y == 1*scale/5 && x >= 1*scale/5-1) ||
+				(scale-x == 2*scale/5+2 && y <= 2*scale/5) || (scale-y == 2*scale/5 && x >= 2*scale/5-1) ||
+				(scale-x == 3*scale/5+2 && y <= 3*scale/5) || (scale-y == 3*scale/5 && x >= 3*scale/5-1) ||
+				(scale-x == 4*scale/5+2 && y <= 4*scale/5) || (scale-y == 4*scale/5 && x >= 4*scale/5-1))
 			// (x != 0 && y != 0) && (x != scale-1 && y != scale-1)
 		}
 
