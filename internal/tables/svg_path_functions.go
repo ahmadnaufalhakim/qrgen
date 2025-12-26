@@ -255,6 +255,50 @@ var PathSymbols = map[qrconst.ModuleShape][]string{
 			fill="rgba(0,0,0,1.)"
 		/>`,
 	},
+	qrconst.LeftMandorla: {
+		`<path
+			id="` + qrconst.LeftMandorla.String() + `__render"
+			d="M 0 0 V .5 A .5 .5 0 0 0 .5 1 H 1 V .5 A .5 .5 0 0 0 .5 0 Z"
+			fill="rgba(0,0,0,1.)"
+		/>`,
+		`<path
+			id="` + qrconst.LeftMandorla.String() + `__render--r"
+			d="M 0 0 V .5 A .5 .5 0 0 0 .5 1 H 1.5 V .5 A .5 .5 0 0 0 1 0 Z"
+			fill="rgba(0,0,0,1.)"
+		/>`,
+		`<path
+			id="` + qrconst.LeftMandorla.String() + `__render--d"
+			d="M 0 0 V 1 A .5 .5 0 0 0 .5 1.5 H 1 V .5 A .5 .5 0 0 0 .5 0 Z"
+			fill="rgba(0,0,0,1.)"
+		/>`,
+		`<path
+			id="` + qrconst.LeftMandorla.String() + `__render--r-d"
+			d="M 0 0 V 1 A .5 .5 0 0 0 .5 1.5 H 1 V 1 H 1.5 V .5 A .5 .5 0 0 0 1 0 Z"
+			fill="rgba(0,0,0,1.)"
+		/>`,
+	},
+	qrconst.RightMandorla: {
+		`<path
+			id="` + qrconst.RightMandorla.String() + `__render"
+			d="M .5 0 A .5 .5 0 0 0 0 .5 V 1 H .5 A .5 .5 0 0 0 1 .5 V 0 Z"
+			fill="rgba(0,0,0,1.)"
+		/>`,
+		`<path
+			id="` + qrconst.RightMandorla.String() + `__render--r"
+			d="M .5 0 A .5 .5 0 0 0 0 .5 V 1 H 1 A .5 .5 0 0 0 1.5 .5 V 0 Z"
+			fill="rgba(0,0,0,1.)"
+		/>`,
+		`<path
+			id="` + qrconst.RightMandorla.String() + `__render--d"
+			d="M .5 0 A .5 .5 0 0 0 0 .5 V 1.5 H .5 A .5 .5 0 0 0 1 1 V 0 Z"
+			fill="rgba(0,0,0,1.)"
+		/>`,
+		`<path
+			id="` + qrconst.RightMandorla.String() + `__render--r-d"
+			d="M .5 0 A .5 .5 0 0 0 0 .5 V 1.5 H .5 A .5 .5 0 0 0 1 1 A .5 .5 0 0 0 1.5 .5 V 0 Z"
+			fill="rgba(0,0,0,1.)"
+		/>`,
+	},
 	qrconst.LeftLeaf: {
 		`<g id="` + qrconst.LeftLeaf.String() + `__base">
 			<rect width="100%" height="100%" fill="black" />
@@ -923,6 +967,50 @@ var PathRenderFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahe
 
 		return paths
 	},
+	qrconst.LeftMandorla: func(lookahead qrconst.Lookahead) []string {
+		R := lookahead.Has(qrconst.LookR)
+		D := lookahead.Has(qrconst.LookD)
+
+		rules := []rule{
+			{R && D, "--r-d"},
+			{R, "--r"},
+			{D, "--d"},
+		}
+
+		for _, rule := range rules {
+			if rule.cond {
+				return []string{
+					use(qrconst.LeftMandorla, "render", rule.suffix),
+				}
+			}
+		}
+
+		return []string{
+			use(qrconst.LeftMandorla, "render", ""),
+		}
+	},
+	qrconst.RightMandorla: func(lookahead qrconst.Lookahead) []string {
+		R := lookahead.Has(qrconst.LookR)
+		D := lookahead.Has(qrconst.LookD)
+
+		rules := []rule{
+			{R && D, "--r-d"},
+			{R, "--r"},
+			{D, "--d"},
+		}
+
+		for _, rule := range rules {
+			if rule.cond {
+				return []string{
+					use(qrconst.RightMandorla, "render", rule.suffix),
+				}
+			}
+		}
+
+		return []string{
+			use(qrconst.RightMandorla, "render", ""),
+		}
+	},
 	qrconst.LeftLeaf: func(lookahead qrconst.Lookahead) []string {
 		var prefix string
 		if lookahead.Has(qrconst.LookStructural) {
@@ -1096,6 +1184,12 @@ var PathMergeFunctions = map[qrconst.ModuleShape]func(lookahead qrconst.Lookahea
 		return nil
 	},
 	qrconst.Blob: func(lookahead qrconst.Lookahead) []string {
+		return nil
+	},
+	qrconst.LeftMandorla: func(lookahead qrconst.Lookahead) []string {
+		return nil
+	},
+	qrconst.RightMandorla: func(lookahead qrconst.Lookahead) []string {
 		return nil
 	},
 	qrconst.LeftLeaf: func(lookahead qrconst.Lookahead) []string {

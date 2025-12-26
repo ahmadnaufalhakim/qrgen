@@ -161,6 +161,48 @@ var PixelRenderFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahe
 
 		return euclideanDist(x, y, cx, cy) <= r*r+4
 	},
+	qrconst.LeftMandorla: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+		cx := mid(scale)
+		cy := mid(scale)
+
+		r := cx
+		dx := float64(x) - cx
+		dy := cy - float64(y)
+
+		R_U := lookahead.HasAny(qrconst.LookR, qrconst.LookU) &&
+			(dx >= 0 || dy >= 0)
+		L_D := lookahead.HasAny(qrconst.LookL, qrconst.LookD) &&
+			(dx <= 0 || dy <= 0)
+
+		if R_U || L_D {
+			return true
+		} else if (dx >= 0 && dy >= 0) || (dx <= 0 && dy <= 0) {
+			return euclideanDist(x, y, cx, cy) < r*r
+		} else {
+			return true
+		}
+	},
+	qrconst.RightMandorla: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+		cx := mid(scale)
+		cy := mid(scale)
+
+		r := cx
+		dx := float64(x) - cx
+		dy := cy - float64(y)
+
+		U_L := lookahead.HasAny(qrconst.LookU, qrconst.LookL) &&
+			(dx <= 0 || dy >= 0)
+		D_R := lookahead.HasAny(qrconst.LookD, qrconst.LookR) &&
+			(dx >= 0 || dy <= 0)
+
+		if U_L || D_R {
+			return true
+		} else if (dx <= 0 && dy >= 0) || (dx >= 0 && dy <= 0) {
+			return euclideanDist(x, y, cx, cy) < r*r
+		} else {
+			return true
+		}
+	},
 	qrconst.LeftLeaf: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		r := float64(scale)
 		distFromUR := euclideanDist(x, y, r, 0)
@@ -544,6 +586,12 @@ var PixelMergeFunctions = map[qrconst.ModuleShape]func(x, y, scale int, lookahea
 			return euclideanDist(x, y, cx, cy) > r*r+4
 		}
 
+		return false
+	},
+	qrconst.LeftMandorla: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
+		return false
+	},
+	qrconst.RightMandorla: func(x, y, scale int, lookahead qrconst.Lookahead) bool {
 		return false
 	},
 	qrconst.LeftLeaf: func(x, y, scale int, lookahead qrconst.Lookahead) bool {

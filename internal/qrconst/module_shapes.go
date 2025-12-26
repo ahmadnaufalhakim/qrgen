@@ -9,6 +9,8 @@ const (
 	HorizontalBlob
 	VerticalBlob
 	Blob
+	LeftMandorla
+	RightMandorla
 	LeftLeaf
 	RightLeaf
 	Diamond
@@ -39,6 +41,10 @@ func (ms ModuleShape) String() string {
 		return "verticalBlob"
 	case Blob:
 		return "blob"
+	case LeftMandorla:
+		return "leftMandorla"
+	case RightMandorla:
+		return "rightMandorla"
 	case LeftLeaf:
 		return "leftLeaf"
 	case RightLeaf:
