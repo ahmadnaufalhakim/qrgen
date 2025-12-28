@@ -110,15 +110,11 @@ func (a *QRGeneratorApp) buildUI() {
 		a.markQRDirty()
 	}
 
-	// QR Code options panel
-	optionsPanel := a.buildOptionsPanel()
-	// QR Code options label
-	optionsCard := widget.NewCard("QR Code Options", "", optionsPanel)
+	// Basic options
+	basicOptionsPanel := a.buildBasicOptionsPanel()
 
-	// Render options panel
-	renderPanel := a.buildRenderPanel()
-	// Render options label
-	renderCard := widget.NewCard("Render Options", "", renderPanel)
+	// Advanced options
+	advancedOptionsPanel := a.buildAdvancedOptionsPanel()
 
 	// Preview panel
 	previewPanel := a.buildPreviewPanel()
@@ -130,9 +126,9 @@ func (a *QRGeneratorApp) buildUI() {
 	leftPanel := container.NewVBox(
 		tabs,
 		widget.NewSeparator(),
-		optionsCard,
+		container.NewPadded(basicOptionsPanel),
 		widget.NewSeparator(),
-		renderCard,
+		container.NewPadded(advancedOptionsPanel),
 		saveButton,
 	)
 
@@ -230,7 +226,7 @@ func (a *QRGeneratorApp) buildTelephoneTab() fyne.CanvasObject {
 	return container.NewPadded(a.telephoneEntry)
 }
 
-func (a *QRGeneratorApp) buildOptionsPanel() fyne.CanvasObject {
+func (a *QRGeneratorApp) buildBasicOptionsPanel() fyne.CanvasObject {
 	// Error correction level
 	ecLevels := []string{
 		"L (Low - 7%)",
@@ -269,33 +265,6 @@ func (a *QRGeneratorApp) buildOptionsPanel() fyne.CanvasObject {
 		a.markQRDirty()
 	}))
 
-	// Mask pattern
-	maskPatterns := []string{
-		"Auto",
-		"Pattern 0", "Pattern 1", "Pattern 2", "Pattern 3",
-		"Pattern 4", "Pattern 5", "Pattern 6", "Pattern 7",
-	}
-	a.maskPatternSelect = widget.NewSelect(
-		maskPatterns,
-		func(s string) {
-			a.markQRDirty()
-		},
-	)
-	a.maskPatternSelect.SetSelected("Auto")
-
-	form := widget.NewForm(
-		widget.NewFormItem("Error Correction", a.ecLevelRadio),
-		widget.NewFormItem("Min. version (1-40)", container.NewVBox(
-			a.minVersionEntry,
-			minVersionSlider,
-		)),
-		widget.NewFormItem("Mask Pattern", a.maskPatternSelect),
-	)
-
-	return form
-}
-
-func (a *QRGeneratorApp) buildRenderPanel() fyne.CanvasObject {
 	// Module shape
 	moduleShapes := []string{
 		"Square",
@@ -333,6 +302,44 @@ func (a *QRGeneratorApp) buildRenderPanel() fyne.CanvasObject {
 		func() { a.chooseColor("foreground") },
 	)
 
+	// Basic Options form
+	form := widget.NewForm(
+		widget.NewFormItem("Error Correction", a.ecLevelRadio),
+		widget.NewFormItem("Min. version (1-40)", container.NewVBox(
+			a.minVersionEntry,
+			minVersionSlider,
+		)),
+		widget.NewFormItem("Module Shape", a.moduleShapeSelect),
+		widget.NewFormItem("Background Color", a.backgroundColorBtn),
+		widget.NewFormItem("Foreground Color", a.foregroundColorBtn),
+	)
+
+	return widget.NewCard("Basic Options", "", container.NewPadded(form))
+}
+
+func (a *QRGeneratorApp) buildQRAdvancedPanel() fyne.CanvasObject {
+	// Mask pattern
+	maskPatterns := []string{
+		"Auto",
+		"Pattern 0", "Pattern 1", "Pattern 2", "Pattern 3",
+		"Pattern 4", "Pattern 5", "Pattern 6", "Pattern 7",
+	}
+	a.maskPatternSelect = widget.NewSelect(
+		maskPatterns,
+		func(s string) {
+			a.markQRDirty()
+		},
+	)
+	a.maskPatternSelect.SetSelected("Auto")
+
+	form := widget.NewForm(
+		widget.NewFormItem("Mask Pattern", a.maskPatternSelect),
+	)
+
+	return container.NewPadded(form)
+}
+
+func (a *QRGeneratorApp) buildRenderAdvancedPanel() fyne.CanvasObject {
 	// Radius slider and label
 	a.radiusSlider = widget.NewSlider(1, 10)
 	a.radiusSlider.Step = 1
@@ -385,9 +392,6 @@ func (a *QRGeneratorApp) buildRenderPanel() fyne.CanvasObject {
 	a.kernelTypeSelect.SetSelected("Lanczos2")
 
 	form := widget.NewForm(
-		widget.NewFormItem("Module Shape", a.moduleShapeSelect),
-		widget.NewFormItem("Background Color", a.backgroundColorBtn),
-		widget.NewFormItem("Foreground Color", a.foregroundColorBtn),
 		widget.NewFormItem("Kernel Type", a.kernelTypeSelect),
 		widget.NewFormItem("Kernel Radius", container.NewVBox(
 			a.radiusLabel,
@@ -395,7 +399,23 @@ func (a *QRGeneratorApp) buildRenderPanel() fyne.CanvasObject {
 		)),
 	)
 
-	return form
+	return container.NewPadded(form)
+}
+
+func (a *QRGeneratorApp) buildAdvancedOptionsPanel() fyne.CanvasObject {
+	// QR Code advanced options
+	qrAdvancedPanel := a.buildQRAdvancedPanel()
+	// Render advanced options
+	renderAdvancedPanel := a.buildRenderAdvancedPanel()
+
+	// Create accordion
+	accordion := widget.NewAccordion(
+		widget.NewAccordionItem("QR Code Options", qrAdvancedPanel),
+		widget.NewAccordionItem("Render Options", renderAdvancedPanel),
+	)
+	accordion.MultiOpen = true
+
+	return widget.NewCard("Advanced Options", "", accordion)
 }
 
 func (a *QRGeneratorApp) buildPreviewPanel() fyne.CanvasObject {
