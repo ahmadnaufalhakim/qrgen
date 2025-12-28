@@ -112,9 +112,13 @@ func (a *QRGeneratorApp) buildUI() {
 
 	// QR Code options panel
 	optionsPanel := a.buildOptionsPanel()
+	// QR Code options label
+	optionsCard := widget.NewCard("QR Code Options", "", optionsPanel)
 
 	// Render options panel
 	renderPanel := a.buildRenderPanel()
+	// Render options label
+	renderCard := widget.NewCard("Render Options", "", renderPanel)
 
 	// Preview panel
 	previewPanel := a.buildPreviewPanel()
@@ -126,9 +130,9 @@ func (a *QRGeneratorApp) buildUI() {
 	leftPanel := container.NewVBox(
 		tabs,
 		widget.NewSeparator(),
-		optionsPanel,
+		optionsCard,
 		widget.NewSeparator(),
-		renderPanel,
+		renderCard,
 		saveButton,
 	)
 
@@ -139,7 +143,7 @@ func (a *QRGeneratorApp) buildUI() {
 	mainContent.SetOffset(.4)
 
 	a.window.SetContent(mainContent)
-	a.window.Resize(fyne.NewSize(1200, 800))
+	a.window.Resize(fyne.NewSize(1200, 900))
 }
 
 func (a *QRGeneratorApp) buildPlainTextTab() fyne.CanvasObject {
@@ -240,6 +244,7 @@ func (a *QRGeneratorApp) buildOptionsPanel() fyne.CanvasObject {
 			a.markQRDirty()
 		},
 	)
+	a.ecLevelRadio.Required = true
 	a.ecLevelRadio.SetSelected("M (Medium - 15%)")
 
 	// Minimum version
