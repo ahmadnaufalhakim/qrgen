@@ -255,42 +255,10 @@ func (a *QRGeneratorApp) buildOptionsPanel() fyne.CanvasObject {
 		binding.IntToString(minVersion),
 	)
 	a.minVersionEntry.SetPlaceHolder("1-40")
-	a.minVersionEntry.OnChanged = func(s string) {
-		// If empty string -> reset minVersion to 1
-		if s == "" {
-			_ = minVersion.Set(1)
-			a.minVersionEntry.SetText("1")
-		}
-
-		// If there exist non-numeric characters -> revert to binding value
-		for _, r := range s {
-			if r < '0' || r > '9' {
-				v, _ := minVersion.Get()
-				a.minVersionEntry.SetText(strconv.Itoa(v))
-				return
-			}
-		}
-
-		// If numeric but out of range -> clamp
-		v, err := strconv.Atoi(s)
-		if err != nil {
-			return
-		}
-
-		if v < 1 {
-			_ = minVersion.Set(1)
-			a.minVersionEntry.SetText("1")
-			return
-		}
-		if v > 40 {
-			_ = minVersion.Set(40)
-			a.minVersionEntry.SetText("40")
-			return
-		}
-
-		// If string is valid -> update binding
-		_ = minVersion.Set(v)
-	}
+	a.minVersionEntry.OnChanged = validateMinVersionEntry(
+		minVersion,
+		a.minVersionEntry,
+	)
 
 	minVersionSlider := widget.NewSliderWithData(
 		1, 40, binding.IntToFloat(minVersion),
@@ -764,6 +732,54 @@ func (a *QRGeneratorApp) getRadius() int {
 	}
 
 	return int(a.radiusSlider.Value)
+}
+
+func digitsOnly(s string) string {
+	var b strings.Builder
+	for _, r := range s {
+		if r >= '0' && r <= '9' {
+			b.WriteRune(r)
+		}
+	}
+
+	return b.String()
+}
+
+func validateMinVersionEntry(
+	minVersion binding.Int,
+	entry *widget.Entry,
+) func(string) {
+	return func(s string) {
+		cleanStr := digitsOnly(s)
+
+		// If empty string -> reset minVersion to 1
+		if cleanStr == "" {
+			_ = minVersion.Set(1)
+			return
+		}
+
+		// If length of string is 3 or more -> do nothing
+		if len(cleanStr) > 2 {
+			entry.SetText(s[:len(s)-1])
+			return
+		}
+
+		// If numeric but out of range -> clamp
+		v, err := strconv.Atoi(cleanStr)
+		if err != nil {
+			return
+		}
+
+		if v < 1 {
+			v = 1
+		} else if v > 40 {
+			v = 40
+		}
+
+		// If string is valid -> update binding
+		_ = minVersion.Set(v)
+		entry.SetText(strconv.Itoa(v))
+	}
 }
 
 func isSameBuild(a, b *qrBuildState) bool {
