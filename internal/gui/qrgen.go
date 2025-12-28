@@ -491,7 +491,7 @@ func (a *QRGeneratorApp) buildPreviewImage() image.Image {
 			maskNum:    a.getMaskPattern(),
 		}
 
-		if a.lastBuildState == nil || !sameBuild(a.lastBuildState, &desired) {
+		if a.lastBuildState == nil || !isSameBuild(a.lastBuildState, &desired) {
 			builder := qrcode.NewQRBuilder(desired.text).
 				WithMinVersion(desired.minVersion).
 				WithErrorCorrectionLevel(desired.ecLevel).
@@ -766,7 +766,7 @@ func (a *QRGeneratorApp) getRadius() int {
 	return int(a.radiusSlider.Value)
 }
 
-func sameBuild(a, b *qrBuildState) bool {
+func isSameBuild(a, b *qrBuildState) bool {
 	if a == nil || b == nil {
 		return false
 	}
