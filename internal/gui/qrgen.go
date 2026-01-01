@@ -1,6 +1,7 @@
 package gui
 
 import (
+	_ "embed"
 	"fmt"
 	"image"
 	"image/color"
@@ -69,11 +70,29 @@ type QRGeneratorApp struct {
 
 	dirtyQR     bool // encoding/matrix dirty
 	dirtyRender bool // visual dirty
+
+	qrIcon    *fyne.StaticResource
+	paintIcon *fyne.StaticResource
 }
+
+//go:embed qr_icon.png
+var qrIconBytes []byte
+
+//go:embed paint_icon.png
+var paintIconBytes []byte
 
 func NewQRGeneratorApp() *QRGeneratorApp {
 	app := app.NewWithID("qrgen")
 	window := app.NewWindow("QRGen")
+
+	qrIconResource := &fyne.StaticResource{
+		StaticName:    "qr_icon.png",
+		StaticContent: qrIconBytes,
+	}
+	paintIconResource := &fyne.StaticResource{
+		StaticName:    "paint_icon.png",
+		StaticContent: paintIconBytes,
+	}
 
 	qrGenApp := &QRGeneratorApp{
 		app:         app,
@@ -83,6 +102,8 @@ func NewQRGeneratorApp() *QRGeneratorApp {
 		updateTimer: time.NewTimer(500 * time.Millisecond),
 		dirtyQR:     true,
 		dirtyRender: true,
+		qrIcon:      qrIconResource,
+		paintIcon:   paintIconResource,
 	}
 	qrGenApp.updateTimer.Stop()
 
@@ -408,14 +429,43 @@ func (a *QRGeneratorApp) buildAdvancedOptionsPanel() fyne.CanvasObject {
 	// Render advanced options
 	renderAdvancedPanel := a.buildRenderAdvancedPanel()
 
-	// Create accordion
-	accordion := widget.NewAccordion(
-		widget.NewAccordionItem("QR Code Options", qrAdvancedPanel),
-		widget.NewAccordionItem("Render Options", renderAdvancedPanel),
-	)
-	accordion.MultiOpen = true
+	// QR Code section
+	qrExpanded := false
+	qrContent := container.NewVBox(qrAdvancedPanel)
+	qrContent.Hide()
+	qrTitleBtn := widget.NewButtonWithIcon("QR Code Options", a.qrIcon, func() {
+		qrExpanded = !qrExpanded
+		if qrExpanded {
+			qrContent.Show()
+		} else {
+			qrContent.Hide()
+		}
+	})
+	qrTitleBtn.Importance = widget.LowImportance
 
-	return widget.NewCard("Advanced Options", "", accordion)
+	// Render section
+	renderExpanded := false
+	renderContent := container.NewVBox(renderAdvancedPanel)
+	renderContent.Hide()
+	renderTitleBtn := widget.NewButtonWithIcon("Render Options", a.paintIcon, func() {
+		renderExpanded = !renderExpanded
+		if renderExpanded {
+			renderContent.Show()
+		} else {
+			renderContent.Hide()
+		}
+	})
+	renderTitleBtn.Importance = widget.LowImportance
+
+	advancedContent := container.NewVBox(
+		qrTitleBtn,
+		qrContent,
+		widget.NewSeparator(),
+		renderTitleBtn,
+		renderContent,
+	)
+
+	return widget.NewCard("Advanced Options", "", container.NewPadded(advancedContent))
 }
 
 func (a *QRGeneratorApp) buildPreviewPanel() fyne.CanvasObject {
